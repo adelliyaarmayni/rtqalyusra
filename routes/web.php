@@ -1,86 +1,156 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DetailHafalanController;
+use App\Http\Controllers\DetailKehadiranController;
+use App\Http\Controllers\HafalanSantriController;
+use App\Http\Controllers\KehadiranAdminController;
+use App\Http\Controllers\KehadiranController;
+use App\Http\Controllers\KinerjaGuruController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\DashboardAdminController;
+use App\Http\Controllers\DashboardGuruController;
+use App\Http\Controllers\JadwalMengajarController;
+use App\Http\Controllers\GuruController;
+use App\Http\Controllers\SantriController;
+use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\PeriodeController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\DashboardYayasanController;
+use App\Http\Controllers\DetailHafalanAdminController;
+use App\Http\Controllers\HafalanAdminController;
+use App\Http\Controllers\HafalanYayasanController;
+use App\Http\Controllers\KehadiranYayasanController;
+use App\Http\Controllers\KinerjaGuruAdminController;
 
-Route::get('/', function () {
-    return view('admin.dashboard.master');
-})->name('admin.dashboard');
 
-//JADWAL MENGAJAR//
-//jadwalmengajarindex//
-Route::get('/admin/jadwalmengajar/index', function () {
-    return view('admin.jadwalmengajar.index');
-})->name('admin.jadwalmengajar.index');
-//jadwalmengajartambah//
-Route::get('/admin/jadwalmengajar/tambah', function () {
-    return view('admin.jadwalmengajar.tambah');
-})->name('admin.jadwalmengajar.tambah');
-//jadwalmengajaredit//
-// Route::get('/admin/jadwalmengajar/edit/{id}', function ($id) {
-//     return view('admin.jadwalmengajar.edit', ['id' => $id]);
-// })->name('admin.jadwalmengajar.edit');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
 
-//DATA GURU//
-//dataguruindex//
-Route::get('/admin/dataguru/index', function () {
-    return view('admin.dataguru.index');
-})->name('admin.dataguru.index');
-//datagurutambah//
-Route::get('/admin/dataguru/tambah', function () {
-    return view('admin.dataguru.tambah');
-})->name('admin.dataguru.tambah');
+// API - Data Kehadiran
+Route::prefix('api')->name('api.')->group(function () {
+    // API untuk data kehadiran santri (admin)
+    Route::get('admin/kehadiran/data', [KehadiranAdminController::class, 'getKehadiranData'])->name('admin.kehadiran.data');
 
-//DATA SANTRI//
-//datasantriindex//
-Route::get('/admin/datasantri/index', function () {
-    return view('admin.datasantri.index');
-})->name('admin.datasantri.index');
-//datasantritambah//
-Route::get('/admin/datasantri/tambah', function () {
-    return view('admin.datasantri.tambah');
-})->name('admin.datasantri.tambah');
+    // API untuk data dokumentasi kegiatan (admin)
+    Route::get('admin/dokumentasi/data', [KehadiranAdminController::class, 'getDokumentasiData'])->name('admin.dokumentasi.data');
+});
+Route::prefix('admin')->name('admin.')->group(function () {
+    // ------------------- Dashboard ------------------- //
+    // Route::get('/', function () {
+    //     return view('admin.dashboard.master');
+    // })->name('dashboard');
 
-//KELOLA PENGGUNA//
-//kelolapenggunaindex//
-Route::get('/admin/kelolapengguna/index', function () {
-    return view('admin.kelolapengguna.index');
-})->name('admin.kelolapengguna.index');
-Route::get('/admin/kelolapengguna/tambah', function () {
-    return view('admin.kelolapengguna.tambah');
-})->name('admin.kelolapengguna.tambah');
+    // Route::get('/', [DashboardAdminController::class, 'index'])->name('dashboard');
 
-//PERIODE//
-//periodeindex//
-Route::get('/admin/periode/index', function () {
-    return view('admin.periode.index');
-})->name('admin.periode.index');
+    // ------------------- Jadwal Mengajar ------------------- //
+    Route::resource('jadwalmengajar', JadwalMengajarController::class)->names('jadwalmengajar');
 
-//KATEGORI PENILAIAN//
-//kategoripenilaianindex//
-Route::get('/admin/kategoripenilaian/index', function () {
-    return view('admin.kategoripenilaian.index');
-})->name('admin.kategoripenilaian.index');
 
-//KEHADIRAN ADMIN//
-//kehadiranadminindex//
-Route::get('/admin/kehadiranA/index', function () {
-    return view('admin.kehadiranA.index');
-})->name('admin.kehadiranA.index');
-Route::get('/admin/kehadiranA/detail', function () {
-    return view('admin.kehadiranA.detail');
-})->name('admin.kehadiranA.detail');
+    // ------------------- Data Guru ------------------- //
+    Route::resource('dataguru', GuruController::class)->names('dataguru');
 
-//HAFALAN SANTRI//
-//hafalanadminindex//
-Route::get('/admin/hafalanadmin/index', function () {
-    return view('admin.hafalanadmin.index');
-})->name('admin.hafalanadmin.index');
-Route::get('/admin/hafalanadmin/detail', function () {
-    return view('admin.hafalanadmin.detail');
-})->name('admin.hafalanadmin.detail');
+    // ------------------- Data Santri ------------------- //
+    Route::resource('datasantri', SantriController::class)->names('datasantri');
 
-//KINERJA GURU//
-//kinerjaguruindex//
-Route::get('/admin/kinerjaguru/index', function () {
-    return view('admin.kinerjaguru.index');
-})->name('admin.kinerjaguru.index');
+    // ------------------- Kelola Pengguna ------------------- //
+    Route::prefix('kelolapengguna')->name('kelolapengguna.')->group(function () {
+        Route::get('/', [PenggunaController::class, 'index'])->name('index');
+        Route::get('/create', [PenggunaController::class, 'create'])->name('create');
+        Route::post('/', [PenggunaController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [PenggunaController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [PenggunaController::class, 'update'])->name('update');
+        Route::delete('/{id}', [PenggunaController::class, 'destroy'])->name('destroy');
+    });
+
+    // ------------------- Periode ------------------- //
+    Route::get('periode', [PeriodeController::class, 'index'])->name('periode.index');
+    Route::post('periode', [PeriodeController::class, 'store'])->name('periode.store');
+
+    // ------------------- Kategori Penilaian ------------------- //
+    Route::get('kategoripenilaian', [KategoriController::class, 'index'])->name('kategoripenilaian.index');
+    Route::post('kategoripenilaian', [KategoriController::class, 'store'])->name('kategoripenilaian.store');
+
+    // ------------------- Kehadiran Admin ------------------- //
+    Route::get('/kehadiranA/index', [KehadiranAdminController::class, 'index'])->name('kehadiranA.index');
+    Route::get('/kehadiranA/detail', [KehadiranAdminController::class, 'detail'])->name('kehadiranA.detail');
+
+    //tambahan tambahan tambahan
+    Route::prefix('hafalanadmin')->name('hafalanadmin.')->group(function () {
+        Route::get('index', [DetailHafalanAdminController::class, 'index'])->name('index');
+        Route::get('detail', [DetailHafalanAdminController::class, 'detail'])->name('detail');
+    });
+
+    // Kinerja Guru
+    Route::prefix('kinerjaguru')->name('kinerjaguru.')->group(function () {
+        Route::get('index', [KinerjaGuruAdminController::class, 'index'])->name('index');
+    });
+});
+
+//GURU//
+Route::prefix('guru')->name('guru.')->group(function () {
+    // Dashboard Guru
+    // Route::get('/', [DashboardGuruController::class, 'index'])->name('dashboard');
+
+    Route::prefix('kehadiranG')->name('kehadiranG.')->group(function () {
+        // Input Kehadiran 
+        Route::get('/index', [KehadiranController::class, 'index'])->name('index');
+        Route::get('/input/{namaKelas}', [KehadiranController::class, 'input'])->name('input');
+    });
+
+    Route::prefix('detailKehadiran')->name('detailKehadiran.')->group(function () {
+        Route::get('/dokumentasi/{tanggal}', [DetailKehadiranController::class, 'getDokumentasi'])->name('dokumentasi');
+        Route::get('/{kelas}', [DetailKehadiranController::class, 'detail'])->name('detail');
+        Route::post('/store', [DetailKehadiranController::class, 'store'])->name('store');
+        Route::get('/{kelas}/{tanggal}', [DetailKehadiranController::class, 'getKehadiran'])->name('data');
+    });
+
+    Route::prefix('hafalansantri')->name('hafalansantri.')->group(function () {
+        Route::get('/index', [DetailHafalanController::class, 'index'])->name('index');
+        Route::get('/input/{kelas}', [DetailHafalanController::class, 'input'])->name('input');
+        Route::get('/detail/{kelas}', [DetailHafalanController::class, 'detail'])->name('detail');
+        Route::post('/store', [DetailHafalanController::class, 'store'])->name('store');
+
+        // Pindahkan route ini ke dalam group
+        Route::get('/detail/{kelas}/{tanggal}', [DetailHafalanController::class, 'getHafalanByDate'])->name('data');
+    });
+});
+
+Route::get('/api/guru/{id}', [KinerjaGuruController::class, 'getGuruDetail'])->name('api.guru.detail');
+Route::get('/api/kinerja/calculate-terlambat', [KinerjaGuruController::class, 'calculateJumlahTerlambat'])->name('api.kinerja.calculateTerlambat');
+// In web.php (for the view)
+// Route::get('/dashboard-yayasan', [App\Http\Controllers\DashboardYayasanController::class, 'index'])->name('yayasan.dashboard');
+
+// In api.php (or web.php if you don't mind exposing these directly)
+Route::get('/api/periodes', [App\Http\Controllers\DashboardYayasanController::class, 'getAllPeriode'])->name('api.getAllPeriode');
+Route::get('/api/kehadiran-santri', [App\Http\Controllers\DashboardYayasanController::class, 'getKehadiranSantriData'])->name('api.getKehadiranSantriData');
+Route::get('/api/hafalan-santri', [App\Http\Controllers\DashboardYayasanController::class, 'getHafalanSantriData'])->name('api.getHafalanSantriData');
+Route::get('/api/penilaian-guru', [App\Http\Controllers\DashboardYayasanController::class, 'getPenilaianGuruData'])->name('api.getPenilaianGuruData');
+Route::get('/api/terlambat-guru', [App\Http\Controllers\DashboardYayasanController::class, 'getJumlahTerlambatPerGuru'])->name('api.getJumlahTerlambatPerGuru');
+
+//YAYASAN//
+Route::prefix('yayasan')->name('yayasan.')->group(function () {
+    // Dashboard yayasan
+    // Route::get('/', function () {
+    //     return view('yayasan.dashboard.master');
+    // })->name('dashboard');
+    // Route::get('/', [DashboardYayasanController::class, 'index'])->name('dashboard');
+
+    Route::prefix('kehadiranY')->name('kehadiranY.')->group(function () {
+        // Halaman memilih cabang
+        Route::get('/index', [KehadiranYayasanController::class, 'index'])->name('index');
+
+        // Halaman detail grafik berdasarkan cabang dan filter periode
+        Route::get('/{cabang}', [KehadiranYayasanController::class, 'detail'])->name('detail');
+    });
+
+    Route::prefix('hafalansantriY')->name('hafalansantriY.')->group(function () {
+        Route::get('/index', [HafalanYayasanController::class, 'index'])->name('index');
+        Route::get('/detail/{cabang}', [HafalanYayasanController::class, 'detail'])->name('detail');
+    });
+
+    Route::get('/kategorinilai', [KinerjaGuruController::class, 'input'])->name('kategorinilai.index');
+    Route::post('/kategorinilai/store', [KinerjaGuruController::class, 'store'])->name('kategorinilai.store');
+});

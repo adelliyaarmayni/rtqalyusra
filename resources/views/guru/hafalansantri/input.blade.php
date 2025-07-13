@@ -1,305 +1,208 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RTQ Al-Yusra | Input Hafalan Santri</title>
-  <link rel="shortcut icon" href="./img/image/logortq.png" type="image/x-icon">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RTQ Al-Yusra | Hafalan Santri</title>
+  <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" type="image/x-icon">
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: sans-serif;
+    .gy-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 240px;
+      height: 100vh;
+      background-color: white;
+      z-index: 50;
+      padding: 1rem;
+      transition: left 0.3s ease;
+      overflow-y: auto;
     }
-    body {
-      background-color: #f0f0f0;
-    }
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
-    .sidebar {
-      width: 220px;
-      background: #fff;
-      padding: 20px;
-      border-right: 1px solid #ddd;
-    }
-    .sidebar-header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .avatar {
-      font-size: 40px;
-      margin-bottom: 5px;
-    }
-    .sidebar a {
-      display: block;
-      padding: 10px;
-      text-decoration: none;
-      color: #000;
-      margin-bottom: 10px;
-      border-radius: 8px;
-    }
-    .sidebar a.active,
-    .sidebar a:hover {
-      background-color: #a4e4b3;
-    }
+
     .main {
+      margin-left: 240px;
       flex: 1;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
     }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
+
+    .hamburger {
+      display: none;
     }
-    .topbar img {
-      height: 60px;
+
+    @media (max-width: 768px) {
+      .gy-sidebar {
+        left: -100%;
+      }
+
+      .gy-sidebar.active {
+        left: 0;
+      }
+
+      .hamburger {
+        display: inline-flex;
+      }
+
+      .main {
+        margin-left: 0 !important;
+      }
     }
-    .form-container {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .form-row {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .form-item {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-width: 150px;
-    }
-    .form-item-small {
-      min-width: 120px;
-      flex: 0 1 auto;
-    }
-    select, input[type="date"], input[type="text"] {
+
+    th,
+    td {
+      white-space: nowrap;
       padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px;
-      background: white;
-      width: 100%;
     }
-    .info-box {
-      padding: 10px;
-      border-radius: 6px;
-      background-color: #f0f0f0;
-      font-size: 14px;
-    }
-    .info-box.green {
-      background-color: #a4e4b3;
-      font-weight: bold;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: center;
-    }
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-    th {
-      background-color: #e2e8f0;
-    }
-    h1 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-    .button-group {
-      display: flex;
-      justify-content: flex-end; 
-      gap: 10px;
-      margin-top: 20px;
-      width: 100%;
-    }
-    .button-group button {
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .input-btn {
-      background-color: #a4e4b3;
-      border: none;
-    }
-    .input-btn:hover {
-      background-color: #8cd4a0;
-    }
-    table select {
-      width: 120px;
-      padding: 6px 8px;
-    }
-    table .form-item {
-      min-width: unset;
-    }
-    /* Style untuk range ayat */
-    .ayat-range {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      justify-content: center;
-    }
-    .ayat-range input {
-      width: 50px;
-      padding: 6px 8px;
-      text-align: center;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-    .ayat-range span {
-      font-size: 14px;
+
+    @media (max-width: 640px) {
+      table {
+        font-size: 12px;
+      }
+
+      select,
+      input {
+        padding: 4px !important;
+        font-size: 12px !important;
+      }
     }
   </style>
 </head>
+
 <body>
-
-<div class="container">
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <div class="avatar">👤</div>
-      <strong>Guru</strong>
-    </div>
-    <a href="#">Dashboard</a>
-    <a href="#">Kehadiran</a>
-    <a href="#" class="active">Hafalan Santri</a>
-  </div>
-
-  <!-- Main Content -->
-  <div class="main">
-    <div class="topbar">
-      <h1>Input Hafalan Santri</h1>
-      <img src="./img/image/logortq.png" alt="Logo RTQ">
-    </div>
-
-    <div class="form-container">
-      <div class="form-group">
-
-        <!-- Informasi Kelas -->
-        <div class="form-item">
-          <div class="info-box green">Kelas A</div>
+  <div class="flex">
+    <!-- Sidebar -->
+    <div class="gy-sidebar" id="sidebar">
+      <div class="sidebar-header flex justify-between items-center mb-4">
+        <div class="flex items-center gap-2">
+          <img src="{{ asset('img/image/akun.png') }}" alt="Foto Admin" class="w-10 h-10 rounded-full">
+          <strong>Guru</strong>
         </div>
-
-        <!-- Guru dan Periode -->
-        <div class="form-row">
-          <div class="form-item">
-            <div class="info-box">Fulanah, S.Ag</div>
-          </div>
-          <div class="form-item">
-            <div class="info-box">Periode 2023-2024</div>
-          </div>
-        </div>
-
-        <!-- Tanggal -->
-        <div class="form-row">
-          <div class="form-item form-item-small">
-            <input type="date" id="tanggal">
-          </div>
-        </div>
-
-        <!-- Tabel Hafalan -->
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Nama Santri</th>
-                <th>Surah</th>
-                <th>Juz</th>
-                <th>Ayat</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>Santri 1</td>
-                <td>
-                  <select>
-                    <option value="">Pilih Surah</option>
-                    <option value="Al-Fatihah">Al-Fatihah</option>
-                    <option value="Al-Baqarah">Al-Baqarah</option>
-                    <option value="Ali Imran">Ali Imran</option>
-                    <option value="An-Nisa">An-Nisa</option>
-                  </select>
-                </td>
-                <td>
-                  <select>
-                    <option value="">Pilih Juz</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                  </select>
-                </td>
-                <td>
-                  <div class="ayat-range">
-                    <input type="text" placeholder="">
-                    <span>-</span>
-                    <input type="text" placeholder="">
-                  </div>
-                </td>
-              </tr>
-
-              <tr>
-                <td>2</td>
-                <td>Santri 2</td>
-                <td>
-                  <select>
-                    <option value="">Pilih Surah</option>
-                    <option value="Al-Fatihah">Al-Fatihah</option>
-                    <option value="Al-Baqarah">Al-Baqarah</option>
-                    <option value="Ali Imran">Ali Imran</option>
-                    <option value="An-Nisa">An-Nisa</option>
-                  </select>
-                </td>
-                <td>
-                  <select>
-                    <option value="">Pilih Juz</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                  </select>
-                </td>
-                <td>
-                  <div class="ayat-range">
-                    <input type="text" placeholder="">
-                    <span>-</span>
-                    <input type="text" placeholder="">
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="button-group">
-          <button class="input-btn">Input</button>
-        </div>
-
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" style="background: none; border: none; cursor: pointer;">
+            <img src="{{ asset('img/image/logout.png') }}" alt="Logout" class="w-4 h-4">
+          </button>
+        </form>
       </div>
+      <a href="{{ route('dashboard') }}">Dashboard</a>
+      <a href="{{ route('guru.kehadiranG.index') }}">Kehadiran</a>
+      <a href="{{ route('guru.hafalansantri.index') }}" class="active">Hafalan Santri</a>
     </div>
 
-  </div>
-</div>
+    <!-- Main Content -->
+    <div class="main flex-1">
+      <div class="gy-topbar bg-white flex justify-between items-center p-4 shadow">
+        <div class="flex items-center gap-4">
+          <button class="hamburger" id="toggleSidebarBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <!-- input hafalan -->
+          <h1 class="text-lg md:text-xl font-bold">Input Hafalan Santri</h1>
+        </div>
+        <img src="{{ asset('img/image/logortq.png') }}" alt="Logo" class="h-14 md:h-20 bg-white p-2 rounded" />
+      </div>
 
+      <form action="{{ route('guru.hafalansantri.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <!-- Hidden Inputs -->
+        <input type="hidden" name="kelas" value="{{ $namaKelas ?? 'N/A' }}">
+        <input type="hidden" name="guru_id" value="{{ $guru->id ?? '' }}">
+        <input type="hidden" name="periode_id" value="{{ $jadwal->first()?->periode?->id ?? '' }}">
+        <input type="hidden" name="jadwal_mengajar_id" value="{{ $jadwal->first()?->id ?? '' }}">
+        <input type="hidden" name="cabang" value="{{ $jadwal->first()->cabang ?? '' }}">
+
+        <!-- Kontainer Form -->
+        <div class="chart-container p-4 space-y-4">
+          <div class="inline-block bg-[#A4E4B3] text-black px-3 py-1.5 rounded font-semibold">
+                        {{ $namaKelas ?? 'N/A' }}
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <div class="bg-gray-100 px-3 py-1.5 rounded text-xs sm:text-sm">{{ $guru->nama_guru ?? '-' }}</div>
+                        <div class="bg-gray-100 px-3 py-1.5 rounded text-xs sm:text-sm">
+                            {{ $jadwal->first()?->periode?->tahun_ajaran ?? '-' }}
+                        </div>
+                        <div class="bg-gray-100 px-3 py-1.5 rounded text-xs sm:text-sm">{{ $jadwal->first()->cabang ?? '-' }}</div>
+                        <input type="date" name="tanggal" value="{{ date('Y-m-d') }}"
+                            class="w-full border border-gray-300 px-3 py-1.5 rounded text-xs sm:text-sm" required>
+                    </div>
+
+                    <!-- Grid Responsive -->
+                    <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                        @foreach ($santri as $index => $s)
+                            <div class="border rounded p-3 bg-white shadow-sm">
+                                <p class="font-semibold text-sm mb-2">{{ $index + 1 }}. {{ $s->nama_santri }}</p>
+                                <input type="hidden" name="hafalan[{{ $s->id }}][santri_id]" value="{{ $s->id }}">
+
+                                <div class="mb-2">
+                                    <label class="text-xs">Surah</label>
+                                    <select name="hafalan[{{ $s->id }}][surah]" required
+                                        class="border rounded px-2 py-1 w-full text-xs">
+                                        <option value="">Pilih Surah</option>
+                                        @foreach ($listSurah['data'] as $surah)
+                                            <option value="{{ $surah['name']['transliteration']['id'] }}">
+                                                {{ $surah['name']['transliteration']['id'] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="mb-2">
+                                    <label class="text-xs">Juz</label>
+                                    <select name="hafalan[{{ $s->id }}][juz]" required
+                                        class="border rounded px-2 py-1 w-full text-xs">
+                                        <option value="">Pilih Juz</option>
+                                        @foreach ($listJuz['data'] as $juz)
+                                            <option value="{{ $juz['juz'] }}">Juz {{ $juz['juz'] }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="text-xs">Ayat</label>
+                                    <div class="flex gap-1">
+                                        <input type="text" name="hafalan[{{ $s->id }}][ayat_awal]" placeholder="Awal"
+                                            class="w-full border rounded px-2 py-1 text-xs" required>
+                                        <span class="self-center">-</span>
+                                        <input type="text" name="hafalan[{{ $s->id }}][ayat_akhir]" placeholder="Akhir"
+                                            class="w-full border rounded px-2 py-1 text-xs" required>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="w-full text-right mt-3">
+                        <button type="submit"
+                            class="bg-[#A4E4B3] hover:bg-green-600 text-black font-semibold text-xs sm:text-sm py-2 px-5 rounded shadow">
+                            Simpan
+                        </button>
+                    </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('toggleSidebarBtn');
+
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      toggleBtn.style.display = sidebar.classList.contains('active') ? 'none' : 'inline-flex';
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+        sidebar.classList.remove('active');
+        toggleBtn.style.display = 'inline-flex';
+      }
+    });
+  </script>
 </body>
+
 </html>

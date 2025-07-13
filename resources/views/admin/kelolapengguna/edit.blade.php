@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RTQ Al-Yusra | Edit Pengguna</title>
+  <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" type="image/x-icon">
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+</head>
+
+<body>
+
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="{{ asset('img/image/akun.png') }}" alt="Foto Admin" style="width: 40px; height: 40px; border-radius: 40%;">
+          <strong>Admin</strong>
+        </div>
+
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" style="background: none; border: none; cursor: pointer;">
+            <img src="{{ asset('img/image/logout.png') }}" alt="Logout" style="width: 18px; height: 18px;">
+          </button>
+        </form>
+      </div>
+
+      <!-- Menu -->
+      <a href="{{ route('dashboard') }}">Dashboard</a>
+      <a href="{{ route('admin.jadwalmengajar.index') }}">Jadwal Mengajar</a>
+      <a href="{{ route('admin.dataguru.index') }}">Data Guru</a>
+      <a href="{{ route('admin.datasantri.index') }}">Data Santri</a>
+      <a href="{{ route('admin.kelolapengguna.index') }}" class="active">Kelola Pengguna</a>
+      <a href="{{ route('admin.periode.index') }}">Periode</a>
+      <a href="{{ route('admin.kategoripenilaian.index') }}">Kategori Penilaian</a>
+      <a href="{{ route('admin.kehadiranA.index') }}">Kehadiran</a>
+      <a href="{{ route('admin.hafalanadmin.index') }}">Hafalan Santri</a>
+      <a href="{{ route('admin.kinerjaguru.index') }}">Kinerja Guru</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+      <div class="topbar">
+        <h1>Edit Pengguna</h1>
+        <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" />
+      </div>
+
+      <div class="form-container">
+        @if ($errors->any())
+        <div class="alert alert-error">
+          <ul>
+            @foreach ($errors->all() as $error)
+              <li>{{ $error }}</li>
+            @endforeach
+          </ul>
+        </div>
+        @endif
+
+        <form action="{{ route('admin.kelolapengguna.update', $pengguna->id) }}" method="POST">
+          @csrf
+          @method('PUT')
+          <div class="form-content">
+            <div class="kpa-form-group">
+              <label for="name">Nama</label>
+              <input type="text" name="name" id="name" value="{{ old('name', $pengguna->name) }}" required>
+            </div>
+
+            <div class="kpa-form-group">
+              <label for="email">Email</label>
+              <input type="email" name="email" id="email" value="{{ old('email', $pengguna->email) }}" required>
+              @error('email')
+              <div style="color:red; font-size:0.9rem;">{{ $message }}</div>
+              @enderror
+            </div>
+
+            <div class="kpa-form-group">
+              <label for="password">Password (kosongkan jika tidak diubah)</label>
+              <input type="password" name="password" id="password">
+              @error('password')
+              <div style="color:red; font-size:0.9rem;">{{ $message }}</div>
+              @enderror
+            </div>
+
+            <div class="kpa-form-group">
+              <label for="password_confirmation">Konfirmasi Password</label>
+              <input type="password" name="password_confirmation" id="password_confirmation">
+            </div>
+
+            <div class="kpa-form-group">
+              <label for="role">Role</label>
+              <select name="role" class="form-control" required>
+                <option value="">-- Pilih Role --</option>
+                @foreach ($roles as $role)
+                  <option value="{{ $role->name }}"
+                    {{ $pengguna->roles->pluck('name')->contains($role->name) ? 'selected' : '' }}>
+                    {{ ucfirst($role->name) }}
+                  </option>
+                @endforeach
+              </select>
+            </div>
+
+            <div class="kpa-form-group">
+              <label for="is_active">Status</label>
+              <select name="is_active" id="is_active" required>
+                <option value="1" {{ $pengguna->is_active == '1' ? 'selected' : '' }}>Aktif</option>
+                <option value="0" {{ $pengguna->is_active == '0' ? 'selected' : '' }}>Nonaktif</option>
+              </select>
+            </div>
+
+            <div class="button-group">
+              <a href="{{ route('admin.kelolapengguna.index') }}">
+                <button type="button" class="cancel-btn">Cancel</button>
+              </a>
+              <button type="submit" class="add-btn">Update</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function (e) {
+      const password = document.getElementById('password').value;
+      const confirmation = document.getElementById('password_confirmation').value;
+      if (password && password !== confirmation) {
+        e.preventDefault();
+        alert('Password dan konfirmasi password tidak cocok!');
+      }
+    });
+  </script>
+
+</body>
+
+</html>

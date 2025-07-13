@@ -1,171 +1,40 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RTQ Al-Yusra | Kehadiran</title>
   <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" type="image/x-icon">
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: sans-serif;
-    }
-    body {
-      background-color: #f0f0f0;
-    }
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
-    .sidebar {
-      width: 220px;
-      background: #fff;
-      padding: 20px;
-      border-right: 1px solid #ddd;
-    }
-    .sidebar-header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .avatar {
-      font-size: 40px;
-      margin-bottom: 5px;
-    }
-    .sidebar a {
-      display: block;
-      padding: 10px;
-      text-decoration: none;
-      color: #000;
-      margin-bottom: 10px;
-      border-radius: 8px;
-    }
-    .sidebar a.active,
-    .sidebar a:hover {
-      background-color: #a4e4b3;
-    }
-    .main {
-      flex: 1;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .topbar img {
-      height: 60px;
-    }
-    .form-container {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .table-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 20px;
-    }
-    .table-controls select,
-    .table-controls input {
-      padding: 5px 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    .table-controls button {
-      background-color: #a4e4b3;
-      color: black;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    .table-controls button:hover {
-      background-color: #a4e4b3;
-    }
-    table {
-      width: 80%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-    th {
-      background-color: #e2e8f0;
-    }
-    th, td {
-    text-align: center;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .form-row {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .form-item {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-width: 200px; 
-    }
-    select, input[type="date"] {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px;
-      background: white;
-      width: auto; 
-      min-width: 100px; 
-    }
-    .documentation-link {
-      cursor: pointer;
-      color: #000; /* Warna diubah menjadi hitam */
-      text-decoration: none;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px;
-      background: white;
-    }
-    .documentation-link:hover {
-      text-decoration: underline;
-    }
-    .button-row {
-      display: flex;
-      justify-content: flex-end;
-    }
-    h1 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-  </style>
+  <!-- style css -->
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
+
 <body>
 
-<div class="container">
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <div class="avatar">👤</div>
-      <strong>Admin</strong>
-    </div>
-    <a href="{{ route('admin.dashboard') }}" >Dashboard</a>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Profil & Logout -->
+      <div class="sidebar-header">
+        <!-- Profil -->
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="{{ asset('img/image/akun.png') }}" alt="Foto Admin"
+            style="width: 40px; height: 40px; border-radius: 40%;">
+          <strong>Admin</strong>
+        </div>
+
+        <!-- Tombol Logout -->
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" style="background: none; border: none; cursor: pointer;">
+            <img src="{{ asset('img/image/logout.png') }}" alt="Logout" style="width: 18px; height: 18px;">
+          </button>
+        </form>
+      </div>
+
+      <!-- Menu -->
+      <a href="{{ route('dashboard') }}">Dashboard</a>
       <a href="{{ route('admin.jadwalmengajar.index') }}">Jadwal Mengajar</a>
       <a href="{{ route('admin.dataguru.index') }}">Data Guru</a>
       <a href="{{ route('admin.datasantri.index') }}">Data Santri</a>
@@ -175,117 +44,116 @@
       <a href="{{ route('admin.kehadiranA.index') }}" class="active">Kehadiran</a>
       <a href="{{ route('admin.hafalanadmin.index') }}">Hafalan Santri</a>
       <a href="{{ route('admin.kinerjaguru.index') }}">Kinerja Guru</a>
-  </div>
+    </div>
 
-  <!-- Main Content -->
-  <div class="main">
+    <!-- Main Content -->
+    <div class="main">
     <div class="topbar">
-      <h1>Detail Kehadiran</h1>
-      <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100"/>
+        <h1>Detail Kehadiran</h1>
+        <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" />
     </div>
 
-    <div class="form-container">
-      <div class="form-group">
-
-        <!-- Periode -->
-        <div class="form-row">
-          <div class="form-item">
-            <select id="periode">
-              <option value="periode">Pilih Periode</option>
-              <option value="2024-2025">2024-2025</option>
-              <option value="2025-2026">2025-2026</option>
-            </select>
-          </div>
+    <div class="ka-form-container">
+        <div class="dk-form-row">
+            <label>Periode : </label>
+            <div class="dk-form-item">{{ $periode->tahun_ajaran ?? '-' }}</div>
         </div>
 
-        <!-- Guru dan Kelas -->
-        <div class="form-row">
-          <div class="form-item">
-            <select id="guru">
-              <option value="guru">Pilih Nama Guru</option>
-              <option value="Fulanah">Fulanah, S.Ag</option>
-              <option value="Other">Guru Lain</option>
-            </select>
-          </div>
-          <div class="form-item">
-            <select id="kelas">
-              <option value="kelas">Pilih Kelas</option>
-              <option value="Kelas A">Kelas A</option>
-              <option value="Kelas B">Kelas B</option>
-            </select>
-          </div>
+        <div class="dk-form-row">
+            <label>Tanggal : </label>
+            <div class="dk-form-item">{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</div>
         </div>
 
-        <!-- Tanggal dan Kegiatan -->
-        <div class="form-row">
-          <div class="form-item">
-            <input type="date" id="tanggal">
-          </div>
-          <div class="form-item">
-            <select id="kategori">
-              <option value="kegiatan">Masukan Kegiatan</option>
-              <option value="Tahajud">Tahajud</option>
-              <option value="Subuh">Subuh</option>
-            </select>
-          </div>
+        <div class="dk-form-row">
+            <label>Dokumentasi : </label>
+            <div class="dk-form-item">
+                @forelse ($dokumentasi as $dok)
+                    <a href="{{ $dok->dokumentasi_url }}" target="_blank">Foto</a><br>
+                @empty
+                    <p>Tidak ada dokumentasi.</p>
+                @endforelse
+            </div>
         </div>
 
-        <!-- Dokumentasi sebagai Link -->
-        <div class="form-row">
-          <div class="form-item">
-            <a href="https://linkdokumentasi.com" target="_blank" class="documentation-link">Dokumentasi Tahajud</a>
-          </div>
+        <div id="kehadiranTableContainer">
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Santri</th>
+                        <th>Kelas</th>
+                        <th>Guru</th>
+                        <th>Kegiatan</th>
+                        <th>Status Kehadiran</th>
+                        <th>Bukti</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($dataKehadiran as $index => $item)
+                        <tr>
+                            <td>{{ $loop->iteration + ($dataKehadiran->currentPage() - 1) * $dataKehadiran->perPage() }}</td>
+                            <td>{{ $item->santri->nama_santri ?? '-' }}</td>
+                            <td>{{ $item->jadwal->kelas ?? '-' }}</td>
+                            <td>{{ $item->jadwal->guru->nama_guru ?? '-' }}</td>
+                            <td>{{ $item->jadwal->kegiatan ?? '-' }}</td>
+                            <td>{{ $item->status_kehadiran }}</td>
+                            <td>
+                                @if($item->bukti && Storage::disk('public')->exists($item->bukti))
+                                    <a href="{{ Storage::url($item->bukti) }}" target="_blank">Lihat Bukti</a>
+                                @else
+                                    -
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="7">Tidak ada data kehadiran</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            {{-- Info jumlah dan navigasi --}}
+            @if ($dataKehadiran->total() > 0)
+                <div class="pagination">
+                    Showing {{ $dataKehadiran->firstItem() }} to {{ $dataKehadiran->lastItem() }} of {{ $dataKehadiran->total() }} entries
+                </div>
+            @endif
+
+            @if ($dataKehadiran->hasPages())
+                <div class="box-pagination-left">
+                    {{-- Tombol Previous --}}
+                    @if ($dataKehadiran->onFirstPage())
+                        <span class="page-box-small disabled">«</span>
+                    @else
+                        <a href="{{ $dataKehadiran->previousPageUrl() }}" class="page-box-small">«</a>
+                    @endif
+
+                    {{-- Nomor halaman --}}
+                    @foreach ($dataKehadiran->getUrlRange(1, $dataKehadiran->lastPage()) as $page => $url)
+                        @if ($page == $dataKehadiran->currentPage())
+                            <span class="page-box-small active">{{ $page }}</span>
+                        @else
+                            <a href="{{ $url }}" class="page-box-small">{{ $page }}</a>
+                        @endif
+                    @endforeach
+
+                    {{-- Tombol Next --}}
+                    @if ($dataKehadiran->hasMorePages())
+                        <a href="{{ $dataKehadiran->nextPageUrl() }}" class="page-box-small">»</a>
+                    @else
+                        <span class="page-box-small disabled">»</span>
+                    @endif
+                </div>
+            @endif
         </div>
 
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Nama Santri</th>
-                <th>Status Kehadiran</th>
-                <th>Keterangan</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>Della Adelliya Armayni</td>
-                <td>Hadir</td>
-                <td>-</td>
-              </tr>
-            </tbody>
-            <tbody>
-              <tr>
-                <td>2</td>
-                <td>Della Adelliya Armayni</td>
-                <td>Hadir</td>
-                <td>-</td>
-              </tr>
-            </tbody>
-            <tbody>
-              <tr>
-                <td>3</td>
-                <td>Della Adelliya Armayni</td>
-                <td>Alfa</td>
-                <td>-</td>
-              </tr>
-            </tbody>
-            <tbody>
-              <tr>
-                <td>4</td>
-                <td>Della Adelliya Armayni</td>
-                <td>Hadir</td>
-                <td>-</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="gki-button-group">
+            <a href="{{ route('admin.kehadiranA.index') }}">
+                <button class="gki-input-btn">Kembali</button>
+            </a>
         </div>
-
-      </div>
     </div>
-  </div>
 </div>
 
 </body>
+
 </html>

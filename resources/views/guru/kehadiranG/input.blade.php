@@ -1,369 +1,357 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RTQ Al-Yusra | Input Kehadiran Kegiatan</title>
-  <link rel="shortcut icon" href="./img/image/logortq.png" type="image/x-icon">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RTQ Al-Yusra | Kehadiran</title>
+  <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" type="image/x-icon">
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     * {
       box-sizing: border-box;
+    }
+
+    html,
+    body {
       margin: 0;
       padding: 0;
-      font-family: sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    body {
-      background-color: #f0f0f0;
+
+    .hamburger {
+      display: none;
     }
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
-    .sidebar {
-      width: 220px;
-      background: #fff;
-      padding: 20px;
-      border-right: 1px solid #ddd;
-    }
-    .sidebar-header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .avatar {
-      font-size: 40px;
-      margin-bottom: 5px;
-    }
-    .sidebar a {
-      display: block;
-      padding: 10px;
-      text-decoration: none;
-      color: #000;
-      margin-bottom: 10px;
-      border-radius: 8px;
-    }
-    .sidebar a.active,
-    .sidebar a:hover {
-      background-color: #a4e4b3;
-    }
-    .main {
-      flex: 1;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .topbar img {
-      height: 60px;
-    }
-    .form-container {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .form-row {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .form-item {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-width: 200px;
-    }
-    select, input[type="date"] {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px;
-      background: white;
-      width: 100%;
-    }
-    .info-box {
-      padding: 10px;
-      border-radius: 6px;
-      background-color: #f0f0f0;
-      font-size: 14px;
-    }
-    .info-box.green {
-      background-color: #a4e4b3;
-      font-weight: bold;
-    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      text-align: center;
     }
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-    th {
-      background-color: #e2e8f0;
-    }
-    h1 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-    .custom-file-upload {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      background: white;
-      display: inline-block;
-      cursor: pointer;
-      text-align: center;
-      font-size: 14px;
-      width: 100%;
-      transition: background-color 0.3s;
-    }
-    .custom-file-upload:hover {
-      background-color: #f9f9f9;
-    }
-    .upload-label-content {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .upload-label-content svg {
-      fill: #555;
-    }
-    .status-wrapper {
-      display: flex;
-      width: 150px;
-      height: 40px;
+
+    th,
+    td {
       border: 1px solid #ccc;
-      border-radius: 6px;
-      overflow: hidden;
-      cursor: pointer;
-      user-select: none;
-      font-weight: bold;
-      font-size: 14px;
-      transition: all 0.3s ease;
+      padding: 8px;
+      text-align: left;
     }
-    .status-left, .status-right {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      border-right: 1px solid #ccc;
-    }
-    .status-left {
-      background-color: #4CAF50;
-      color: white;
-    }
-    .status-right {
-      background-color: white;
-      color: #333;
-      border-right: none;
-    }
-    .status-wrapper.alfa .status-left {
-      background-color: white;
-      color: #333;
-    }
-    .status-wrapper.alfa .status-right {
-      background-color: #f44336;
-      color: white;
-    }
-    .button-group {
-      display: flex;
-      justify-content: flex-end; 
-      gap: 10px;
-      margin-top: 20px;
-      width: 100%;
-    }
-    .button-group button {
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .input-btn {
-      background-color: #a4e4b3;
-      border: none;
-    }
-    .input-btn:hover {
-      background-color: #8cd4a0;
+
+    @media (max-width: 1024px) {
+      .gy-topbar {
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .gy-topbar h1 {
+        font-size: 1rem;
+        white-space: nowrap;
+      }
+
+      .gy-topbar img {
+        height: 48px;
+      }
+
+      .hamburger {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem;
+        background-color: white;
+        border-radius: 0.25rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        z-index: 50;
+      }
+
+      .gy-sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 50vw;
+        height: 100vh;
+        background-color: white;
+        z-index: 50;
+        padding: 1rem;
+        transition: left 0.3s ease;
+      }
+
+      .gy-sidebar.active {
+        left: 0;
+      }
+
+      .main {
+        margin-left: 0 !important;
+        width: 100%;
+      }
+
+      table {
+        font-size: 0.875rem;
+      }
+
+      .chart-container {
+        overflow-x: auto;
+      }
     }
   </style>
 </head>
+
 <body>
-
-<div class="container">
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <div class="avatar">👤</div>
-      <strong>Guru</strong>
-    </div>
-    <a href="#">Dashboard</a>
-    <a href="#" class="active">Kehadiran</a>
-    <a href="#">Hafalan Santri</a>
-  </div>
-
-  <!-- Main Content -->
-  <div class="main">
-    <div class="topbar">
-      <h1>Input Kehadiran</h1>
-      <img src="./img/image/logortq.png" alt="Logo RTQ">
-    </div>
-
-    <div class="form-container">
-      <div class="form-group">
-
-        <!-- Informasi Kelas -->
-        <div class="form-item">
-          <div class="info-box green">Kelas A</div>
+  <div class="container flex">
+    <!-- Sidebar -->
+    <div class="gy-sidebar" id="sidebar">
+      <div class="sidebar-header flex justify-between items-center mb-4">
+        <div class="flex items-center gap-2">
+          <img src="{{ asset('img/image/akun.png') }}" alt="Foto Admin"
+            style="width: 40px; height: 40px; border-radius: 50%;">
+          <strong>Guru</strong>
         </div>
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" style="background: none; border: none; cursor: pointer;">
+            <img src="{{ asset('img/image/logout.png') }}" alt="Logout" style="width: 18px; height: 18px;">
+          </button>
+        </form>
+      </div>
+      <a href="{{ route('dashboard') }}">Dashboard</a>
+      <a href="{{ route('guru.kehadiranG.index') }}" class="active">Kehadiran</a>
+      <a href="{{ route('guru.hafalansantri.index') }}">Hafalan Santri</a>
+    </div>
 
-        <!-- Guru dan Periode -->
-        <div class="form-row">
-          <div class="form-item">
-            <div class="info-box">Fulanah, S.Ag</div>
-          </div>
-          <div class="form-item">
-            <div class="info-box">Periode 2023-2024</div>
-          </div>
+    <!-- Main Content -->
+    <div class="main flex-1">
+      <!-- Topbar -->
+      <div class="gy-topbar bg-white flex justify-between items-center p-4 shadow">
+        <div class="flex items-center gap-2">
+          <button class="hamburger" id="toggleSidebarBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <h1 class="text-xl font-bold">Input Kehadiran</h1>
         </div>
+        <img src="{{ asset('img/image/logortq.png') }}" alt="Logo" class="h-10 w-auto bg-white p-1 rounded" />
+      </div>
 
-        <!-- Kegiatan dan Waktu -->
-        <div class="form-row">
-          <div class="form-item">
-            <select id="kategori">
-              <option value="kegiatan">Masukan Kegiatan</option>
-              <option value="Subuh">Subuh</option>
+      <!-- Form -->
+      <form action="{{ route('guru.detailKehadiran.store') }}" method="POST" enctype="multipart/form-data"
+        id="kehadiranForm">
+        @csrf
+        <div class="chart-container p-4">
+          <!-- Kelas -->
+          <div>
+            <div class="bg-[#A4E4B3] text-black-800 px-4 py-2 rounded-md inline-block">{{ $namaKelas ?? 'N/A' }}</div>
+            <input type="hidden" name="kelas" value="{{ $namaKelas ?? 'N/A' }}">
+          </div>
+
+          <!-- Guru dan Periode -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+            <div>
+              <div class="bg-gray-100 px-4 py-2 rounded-md">{{ $guru->nama_guru ?? '-' }}</div>
+              <input type="hidden" name="guru_id" value="{{ $guru->id ?? '' }}">
+            </div>
+            <div>
+              <div class="bg-gray-100 px-4 py-2 rounded-md">{{ $jadwal->first()->periode->tahun_ajaran ?? '-' }}</div>
+              <input type="hidden" name="periode_id" value="{{ $jadwal->first()->periode_id ?? $selectedPeriode }}">
+            </div>
+          </div>
+
+          <!-- Cabang dan Tanggal -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 ">
+            <div>
+              <div class="bg-gray-100 px-4 py-2 rounded-md">{{ $jadwal->first()->cabang ?? '-' }}</div>
+              <input type="hidden" name="cabang" value="{{ $jadwal->first()->cabang ?? '' }}">
+            </div>
+            <div>
+              <input type="date" id="tanggal" name="tanggal" value="{{ request('tanggal', now()->toDateString()) }}"
+                class="w-full border px-4 py-2 rounded-md">
+            </div>
+          </div>
+
+          <!-- Kegiatan dan Jam -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+            <div>
+              @if($jadwal->isNotEmpty())
+            <select id="kategori" name="kegiatan" onchange="updateJam()" class="w-full border px-4 py-2 rounded-md">
+            @foreach($jadwal as $j)
+            @if ($j && isset($j->kegiatan))
+            <option value="{{ $j->kegiatan }}" data-jam-masuk="{{ $j->jam_masuk ?? '' }}"
+            data-jam-keluar="{{ $j->jam_keluar ?? '' }}" data-id="{{ $j->id ?? '' }}" @if($loop->first) selected
+          @endif>
+            {{ $j->kegiatan }}
+            </option>
+          @endif
+        @endforeach
             </select>
+        @else
+          <div class="text-red-600">Semua kegiatan sudah diinput untuk tanggal ini.</div>
+        @endif
+            </div>
+            <div>
+              <div id="jamBox" class="bg-gray-100 px-4 py-2 rounded-md">-</div>
+              <input type="hidden" name="jam_masuk" id="hidden_jam_masuk">
+              <input type="hidden" name="jam_keluar" id="hidden_jam_keluar">
+              <input type="hidden" name="jadwal_mengajar_id" id="hidden_jadwal_mengajar_id">
+            </div>
           </div>
-          <div class="form-item">
-            <div class="info-box">02.00-04.00</div>
-          </div>
-        </div>
 
-        <!-- Tanggal dan Upload Dokumentasi -->
-        <div class="form-row">
-          <div class="form-item">
-            <input type="date" id="tanggal">
+          <!-- Upload Dokumentasi -->
+          <div class="gki-form-row mt-6">
+            <div class="gki-form-item">
+              <label for="dokumentasi" class="gki-custom-file-upload">
+                <span class="gki-upload-label-content">
+                  Upload Dokumentasi Kegiatan
+                  <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+                    <path d="M0 0h24v24H0V0z" fill="none" />
+                    <path d="M5 20h14v-2H5v2zm7-18l-7 7h4v6h6v-6h4l-7-7z" />
+                  </svg>
+                </span>
+              </label>
+              <input type="file" id="dokumentasi" name="dokumentasi" accept="image/*" style="display: none;">
+            </div>
           </div>
-          <div class="form-item">
-            <label for="dokumentasi" class="custom-file-upload">
-              <span class="upload-label-content">
-                Upload Dokumentasi Kegiatan
-                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
-                  <path d="M0 0h24v24H0V0z" fill="none"/>
-                  <path d="M5 20h14v-2H5v2zm7-18l-7 7h4v6h6v-6h4l-7-7z"/>
-                </svg>
+
+          <!-- Tabel Kehadiran -->
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full border">
+              <thead>
+                <tr class="bg-gray-200 text-left">
+                  <th class="p-2">No</th>
+                  <th class="p-2">Nama Santri</th>
+                  <th class="p-2">Status Kehadiran</th>
+                  <th class="p-2">Keterangan</th>
+                </tr>
+              </thead>
+              <tbody>
+                @forelse ($santri as $index => $s)
+          <tr class="border-t">
+            <td class="p-2">{{ $index + 1 }}</td>
+            <td class="p-2">{{ $s->nama_santri }}</td>
+            <td class="p-2">
+            <div class="gki-status-wrapper" data-santri-id="{{ $s->id }}">
+              <div class="gki-status-left">Hadir</div>
+              <div class="gki-status-right"></div>
+            </div>
+            <input type="hidden" name="kehadiran[{{ $s->id }}][status_kehadiran]" value="Hadir"
+              class="status-input">
+            <input type="hidden" name="kehadiran[{{ $s->id }}][nama_santri]" value="{{ $s->nama_santri }}">
+            <input type="hidden" name="kehadiran[{{ $s->id }}][santri_id]" value="{{ $s->id }}">
+            </td>
+            <td>
+            <label for="bukti{{ $s->id }}" class="gki-custom-file-upload">
+              <span class="gki-upload-label-content" id="buktiLabel{{ $s->id }}">
+              Bukti
+              <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
+                <path d="M0 0h24v24H0V0z" fill="none" />
+                <path d="M5 20h14v-2H5v2zm7-18l-7 7h4v6h6v-6h4l-7-7z" />
+              </svg>
               </span>
             </label>
-            <input type="file" id="dokumentasi" accept="image/*" style="display: none;">
+            <input type="file" id="bukti{{ $s->id }}" name="kehadiran[{{ $s->id }}][bukti]" accept="image/*"
+              style="display: none;">
+            </td>
+          </tr>
+        @empty
+          <tr>
+            <td colspan="4" class="p-2 text-center">Tidak ada santri dalam kelas ini.</td>
+          </tr>
+        @endforelse
+              </tbody>
+            </table>
+            <div class="w-full text-right mt-4">
+              <button type="submit" class="gki-input-btn bg-[#A4E4B3] text-black px-4 py-2 rounded" {{ $jadwal->isEmpty() ? 'disabled' : '' }}>Input</button>
+            </div>
           </div>
         </div>
-
-        <!-- Tabel Kehadiran -->
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Nama Santri</th>
-                <th>Status Kehadiran</th>
-                <th>Keterangan</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>Santri 1</td>
-                <td>
-                  <div style="display: flex; justify-content: center;">
-                    <div class="status-wrapper">
-                      <div class="status-left">Hadir</div>
-                      <div class="status-right"></div>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <label for="bukti1" class="custom-file-upload">
-                    <span class="upload-label-content">
-                      Bukti
-                      <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
-                        <path d="M0 0h24v24H0V0z" fill="none"/>
-                        <path d="M5 20h14v-2H5v2zm7-18l-7 7h4v6h6v-6h4l-7-7z"/>
-                      </svg>
-                    </span>
-                  </label>
-                  <input type="file" id="bukti1" accept="image/*" style="display: none;">
-                </td>
-              </tr>
-
-              <tr>
-                <td>2</td>
-                <td>Santri 2</td>
-                <td>
-                  <div style="display: flex; justify-content: center;">
-                    <div class="status-wrapper">
-                      <div class="status-left">Hadir</div>
-                      <div class="status-right"></div>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <label for="bukti2" class="custom-file-upload">
-                    <span class="upload-label-content">
-                      Bukti
-                      <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
-                        <path d="M0 0h24v24H0V0z" fill="none"/>
-                        <path d="M5 20h14v-2H5v2zm7-18l-7 7h4v6h6v-6h4l-7-7z"/>
-                      </svg>
-                    </span>
-                  </label>
-                  <input type="file" id="bukti2" accept="image/*" style="display: none;">
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="button-group">
-          <button class="input-btn">Input</button>
-        </div>
-
-      </div>
+      </form>
     </div>
-
   </div>
-</div>
 
-<!-- JavaScript -->
-<script>
-  document.querySelectorAll('.status-wrapper').forEach(wrapper => {
-    wrapper.addEventListener('click', function() {
-      this.classList.toggle('alfa');
-      if (this.classList.contains('alfa')) {
-        this.querySelector('.status-left').textContent = '';
-        this.querySelector('.status-right').textContent = 'Alfa';
-      } else {
-        this.querySelector('.status-left').textContent = 'Hadir';
-        this.querySelector('.status-right').textContent = '';
+  <!-- JavaScript -->
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('toggleSidebarBtn');
+
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      toggleBtn.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+        sidebar.classList.remove('active');
+        toggleBtn.classList.remove('hidden');
       }
     });
-  });
-</script>
 
+    document.getElementById('tanggal').addEventListener('change', function () {
+      const selectedDate = this.value;
+      const url = new URL(window.location.href);
+      url.searchParams.set('tanggal', selectedDate);
+      window.location.href = url.href;
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // Status toggle
+      document.querySelectorAll('.gki-status-wrapper').forEach(wrapper => {
+        wrapper.addEventListener('click', function () {
+          const statusInput = this.closest('td').querySelector('.status-input');
+          const statusLeft = this.querySelector('.gki-status-left');
+          const statusRight = this.querySelector('.gki-status-right');
+
+          this.classList.toggle('alfa');
+          if (this.classList.contains('alfa')) {
+            statusLeft.textContent = '';
+            statusRight.textContent = 'Alfa';
+            if (statusInput) statusInput.value = 'Alfa';
+          } else {
+            statusLeft.textContent = 'Hadir';
+            statusRight.textContent = '';
+            if (statusInput) statusInput.value = 'Hadir';
+          }
+        });
+      });
+
+      // Jam update
+      window.updateJam = function () {
+        const kategoriSelect = document.getElementById('kategori');
+        const jamBox = document.getElementById('jamBox');
+        const selectedOption = kategoriSelect.options[kategoriSelect.selectedIndex];
+
+        if (selectedOption) {
+          jamBox.textContent = `${selectedOption.dataset.jamMasuk ?? ''} - ${selectedOption.dataset.jamKeluar ?? ''}`;
+          document.getElementById('hidden_jam_masuk').value = selectedOption.dataset.jamMasuk ?? '';
+          document.getElementById('hidden_jam_keluar').value = selectedOption.dataset.jamKeluar ?? '';
+          document.getElementById('hidden_jadwal_mengajar_id').value = selectedOption.dataset.id ?? '';
+        }
+      };
+
+      updateJam();
+
+      // Logika untuk menampilkan nama file yang dipilih pada label "Dokumentasi Kegiatan"
+      const dokumentasiInput = document.getElementById('dokumentasi');
+      if (dokumentasiInput) {
+        dokumentasiInput.addEventListener('change', function () {
+          const labelContent = this.previousElementSibling.querySelector('.gki-upload-label-content');
+          if (this.files.length > 0) {
+            labelContent.innerHTML = `${this.files[0].name} <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M5 20h14v-2H5v2zm7-18l-7 7h4v6h6v-6h4l-7-7z"/></svg>`;
+          } else {
+            labelContent.innerHTML = `Upload Dokumentasi Kegiatan <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M5 20h14v-2H5v2zm7-18l-7 7h4v6h6v-6h4l-7-7z"/></svg>`;
+          }
+        });
+      }
+
+      // Logika untuk menampilkan nama file yang dipilih pada label "Bukti" santri
+      document.querySelectorAll('input[type="file"][name^="kehadiran["]').forEach(input => {
+        input.addEventListener('change', function () {
+          const labelContent = this.previousElementSibling.querySelector('.gki-upload-label-content');
+          if (this.files.length > 0) {
+            labelContent.innerHTML = `${this.files[0].name} <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M5 20h14v-2H5v2zm7-18l-7 7h4v6h6v-6h4l-7-7z"/></svg>`;
+          } else {
+            labelContent.innerHTML = `Bukti <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M5 20h14v-2H5v2zm7-18l-7 7h4v6h6v-6h4l-7-7z"/></svg>`;
+          }
+        });
+      });
+    });
+  </script>
 </body>
+
 </html>

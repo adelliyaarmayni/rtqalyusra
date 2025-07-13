@@ -1,205 +1,129 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RTQ Al-Yusra | Kehadiran</title>
-  <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" type="image/x-icon">
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: sans-serif;
-    }
-    body {
-      background-color: #f0f0f0;
-    }
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
-    .sidebar {
-      width: 220px;
-      background: #fff;
-      padding: 20px;
-      border-right: 1px solid #ddd;
-    }
-    .sidebar-header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .avatar {
-      font-size: 40px;
-      margin-bottom: 5px;
-    }
-    .sidebar a {
-      display: block;
-      padding: 10px;
-      text-decoration: none;
-      color: #000;
-      margin-bottom: 10px;
-      border-radius: 8px;
-    }
-    .sidebar a.active,
-    .sidebar a:hover {
-      background-color: #a4e4b3;
-    }
-    .main {
-      flex: 1;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .topbar img {
-      height: 60px;
-    }
-    .form-container {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .form-row {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .form-item {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-width: 200px; 
-    }
-    select, input[type="date"] {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px;
-      background: white;
-      width: auto; 
-      min-width: 200px; 
-    }
-    .button-row {
-      display: flex;
-      justify-content: flex-end;
-    }
-    .add-btn {
-      padding: 10px 20px;
-      background: #a4e4b3;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      white-space: nowrap;
-      height: fit-content;
-    }
-    h1 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTQ Al-Yusra | Kehadiran & Dokumentasi Admin</title>
+    <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
 </head>
+
 <body>
 
-<div class="container">
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <div class="avatar">👤</div>
-      <strong>Admin</strong>
-    </div>
-    <a href="{{ route('admin.dashboard') }}" >Dashboard</a>
-      <a href="{{ route('admin.jadwalmengajar.index') }}">Jadwal Mengajar</a>
-      <a href="{{ route('admin.dataguru.index') }}">Data Guru</a>
-      <a href="{{ route('admin.datasantri.index') }}">Data Santri</a>
-      <a href="{{ route('admin.kelolapengguna.index') }}">Kelola Pengguna</a>
-      <a href="{{ route('admin.periode.index') }}">Periode</a>
-      <a href="{{ route('admin.kategoripenilaian.index') }}">Kategori Penilaian</a>
-      <a href="{{ route('admin.kehadiranA.index') }}" class="active">Kehadiran</a>
-      <a href="{{ route('admin.hafalanadmin.index') }}">Hafalan Santri</a>
-      <a href="{{ route('admin.kinerjaguru.index') }}">Kinerja Guru</a>
-  </div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <img src="{{ asset('img/image/akun.png') }}" alt="Foto Admin"
+                        style="width: 40px; height: 40px; border-radius: 40%;">
+                    <strong>Admin</strong>
+                </div>
 
-  <!-- Main Content -->
-  <div class="main">
-    <div class="topbar">
-      <h1>Kehadiran</h1>
-      <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100"/>
-    </div>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" style="background: none; border: none; cursor: pointer;">
+                        <img src="{{ asset('img/image/logout.png') }}" alt="Logout" style="width: 18px; height: 18px;">
+                    </button>
+                </form>
+            </div>
 
-    <div class="form-container">
-      <div class="form-group">
-
-        <!-- Periode -->
-        <div class="form-row">
-          <div class="form-item">
-            <select id="periode">
-              <option value="periode">Pilih Periode</option>
-              <option value="2024-2025">2024-2025</option>
-              <option value="2025-2026">2025-2026</option>
-            </select>
-          </div>
+            <a href="{{ route('dashboard') }}">Dashboard</a>
+            <a href="{{ route('admin.jadwalmengajar.index') }}">Jadwal Mengajar</a>
+            <a href="{{ route('admin.dataguru.index') }}">Data Guru</a>
+            <a href="{{ route('admin.datasantri.index') }}">Data Santri</a>
+            <a href="{{ route('admin.kelolapengguna.index') }}">Kelola Pengguna</a>
+            <a href="{{ route('admin.periode.index') }}">Periode</a>
+            <a href="{{ route('admin.kategoripenilaian.index') }}">Kategori Penilaian</a>
+            <a href="{{ route('admin.kehadiranA.index') }}" class="active">Kehadiran</a>
+            <a href="{{ route('admin.hafalanadmin.index') }}">Hafalan Santri</a>
+            <a href="{{ route('admin.kinerjaguru.index') }}">Kinerja Guru</a>
         </div>
 
-        <!-- Guru dan Kelas -->
-        <div class="form-row">
-          <div class="form-item">
-            <select id="guru">
-              <option value="guru">Pilih Nama Guru</option>
-              <option value="Fulanah">Fulanah, S.Ag</option>
-              <option value="Other">Guru Lain</option>
-            </select>
-          </div>
-          <div class="form-item">
-            <select id="kelas">
-              <option value="kelas">Pilih Kelas</option>
-              <option value="Kelas A">Kelas A</option>
-              <option value="Kelas B">Kelas B</option>
-            </select>
-          </div>
-        </div>
 
-        <!-- Tanggal dan Kegiatan -->
-        <div class="form-row">
-          <div class="form-item">
-            <input type="date" id="tanggal">
-          </div>
-          <div class="form-item">
-            <select id="kategori">
-              <option value="kegiatan">Masukan Kegiatan</option>
-              <option value="Tahajud">Tahajud</option>
-              <option value="Subuh">Subuh</option>
-            </select>
-          </div>
-        </div>
+        <div class="main">
+            <div class="topbar">
+                <h1>Data Kehadiran & Dokumentasi</h1>
+                <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" />
+            </div>
+            @if (session('success'))
+                <div class="alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
 
-        <!-- Button Lihat Detail -->
-        <div class="button-row">
-        <a href="{{ route('admin.kehadiranA.detail') }}">
-          <button class="add-btn">Lihat Detail</button>
-        </a>
-        </div>
+            @if (session('error'))
+                <div class="alert-error">
+                    {{ session('error') }}
+                </div>
+            @endif
 
-      </div>
-    </div>
+            {{-- Filter Section --}}
+            <form method="GET" action="{{ route('admin.kehadiranA.detail') }}">
+                <div class="ka-form-container">
+                    <div class="ka-form-group">
+                        <div class="ka-form-row">
+                            <div class="ka-form-item">
+                                <select name="periode_id" id="periode_id">
+                                    <option value="">Pilih Periode</option>
+                                    @foreach($periodes as $periode)
+                                        <option value="{{ $periode->id }}">{{ $periode->tahun_ajaran }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="ka-form-item">
+                                <select name="cabang" id="cabang">
+                                    <option value="">Semua Cabang</option>
+                                    @foreach($cabangs as $cabang)
+                                        <option value="{{ $cabang }}">{{ $cabang }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
 
-  </div>
-</div>
+                        <div class="ka-form-row">
+                            <div class="ka-form-item">
+                                <select name="nama_guru" id="nama_guru">
+                                    <option value="">Semua Guru</option>
+                                    @foreach($namaGurus as $id => $nama)
+                                        <option value="{{ $id }}">{{ $nama }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="ka-form-item">
+                                <select name="kelas" id="kelas">
+                                    <option value="">Semua Kelas</option>
+                                    @foreach($kelass as $kelas)
+                                        <option value="{{ $kelas }}">{{ $kelas }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
 
+                        <div class="ka-form-row">
+                            <div class="ka-form-item">
+                                <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal') }}">
+                            </div>
+                            <div class="ka-form-item">
+                                <select name="kegiatan" id="kegiatan">
+                                    <option value="">Semua Kegiatan</option>
+                                    @foreach($kegiatans as $kegiatan)
+                                        <option value="{{ $kegiatan }}">{{ $kegiatan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="ka-button-row">
+                            <div class="ka-add-button">
+                                <button type="submit" class="ka-add-btn">Lihat Detail</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </form>
 </body>
+
 </html>

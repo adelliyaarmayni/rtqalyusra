@@ -1,229 +1,163 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RTQ Al-Yusra | Dashboard Guru</title>
   <link rel="shortcut icon" href="./img/image/logortq.png" type="image/x-icon">
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      background-color: #f0f0f0;
-    }
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
-    .sidebar {
-      width: 220px;
-      background-color: #ffffff;
-      padding: 20px;
-      border-right: 1px solid #ddd;
-    }
-    .sidebar a {
-      display: block;
-      padding: 10px;
-      margin-bottom: 10px;
-      text-decoration: none;
-      color: black;
-      border-radius: 8px;
-    }
-    .sidebar a.active,
-    .sidebar a:hover {
-      background-color: #a4e4b3;
-    }
-    .main {
-      flex: 1;
-      padding: 20px;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .dropdown {
-      position: relative;
-      display: inline-block;
-      margin-top: 20px;
-    }
-    .dropdown-btn {
-      background-color: #a4e4b3;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 200px;
-    }
-    .dropdown-content {
+    .hamburger {
       display: none;
-      position: absolute;
-      background-color: white;
-      min-width: 160px;
-      box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
-      border-radius: 8px;
-      z-index: 1;
-      margin-top: 5px;
     }
-    .dropdown-content div {
-      padding: 10px;
-      cursor: pointer;
-    }
-    .dropdown-content div:hover {
-      background-color: #f0f0f0;
-    }
-    .button-group {
-      display: flex;
-      justify-content: flex-start;
-      gap: 10px;
-      margin-top: 20px;
-      width: 150%;
-    }
-    .button-group button {
-      padding: 10px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      background-color: white;
-      border: 1px solid #ddd;
-      transition: background-color 0.3s ease;
-      width: auto; 
-      min-width: 150px;
-    }
-    .button-group button:hover {
-      background-color: #f0f0f0;
-    }
-    .kehadiran-btn, .hafalan-btn {
-      background-color: #ffffff;
-      border: 1px solid #ddd;
-      padding: 12px 24px;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      width: auto;
-      min-width: 150px;
-    }
-    .kehadiran-btn:hover, .hafalan-btn:hover {
-      background-color: #f0f0f0;
-    }
-    .cards {
-      display: flex;
-      gap: 20px;
-      margin-top: 20px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-    .card {
-      background-color: #b2f2bb;
-      padding: 20px;
-      border-radius: 12px;
-      text-align: left;
-      flex: 1 1 200px;  
-      min-width: 100px;
-      max-width: 300px; 
-      height: 150px; 
-    }
-    .card h2 {
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-    .card p {
-      font-size: 16px;
-      color: #333;
-    }
-    .chart-container {
-      background-color: white;
-      padding: 20px;
-      border-radius: 12px;
-    }
-    .chart-placeholder {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-    .chart-box {
-      width: 48%;
-    }
-    input[type="text"]::placeholder {
-      color: #000;
+
+    @media (max-width: 768px) {
+      .gy-sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 240px;
+        height: 100vh;
+        background-color: white;
+        z-index: 50;
+        padding: 1rem;
+        transition: left 0.3s ease;
+      }
+
+      .gy-sidebar.active {
+        left: 0;
+      }
+
+      .hamburger {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem;
+        background-color: white;
+        border-radius: 0.25rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        z-index: 50;
+      }
+
+      .main {
+        margin-left: 0 !important;
+      }
     }
   </style>
 </head>
+
 <body>
-  <div class="container">
+  <div class="container flex">
     <!-- Sidebar -->
-    <div class="sidebar">
-      <div style="text-align:center; margin-bottom:20px;">
-        <div style="font-size:40px;">👤</div>
-        <strong>Guru</strong>
+    <div class="gy-sidebar" id="sidebar">
+      <div class="sidebar-header flex justify-between items-center mb-4">
+        <div class="flex items-center gap-2">
+          <img src="{{ asset('img/image/akun.png') }}" alt="Foto Admin"
+            style="width: 40px; height: 40px; border-radius: 50%;">
+          <strong>Guru</strong>
+        </div>
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" style="background: none; border: none; cursor: pointer;">
+            <img src="{{ asset('img/image/logout.png') }}" alt="Logout" style="width: 18px; height: 18px;">
+          </button>
+        </form>
       </div>
-      <a href="#" class="active">Dashboard</a>
-      <a href="#">Kehadiran</a>
-      <a href="#">Hafalan Santri</a>
+      <a href="{{ route('dashboard') }}" class="active">Dashboard</a>
+      <a href="{{ route('guru.kehadiranG.index') }}">Kehadiran</a>
+      <a href="{{ route('guru.hafalansantri.index') }}">Hafalan Santri</a>
     </div>
 
     <!-- Main Content -->
-    <div class="main">
-      <div class="topbar">
-        <h1>Dashboard</h1>
-        <img src="./img/image/logortq.png" alt="Logo RTQ" height="100"/>
+    <div class="main flex-1">
+      <div class="gy-topbar bg-white flex justify-between items-center p-4 shadow">
+        <div class="flex items-center gap-4">
+          <button class="hamburger" id="toggleSidebarBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <h1 class="text-xl font-bold">Dashboard</h1>
+        </div>
+        <img src="{{ asset('img/image/logortq.png') }}" alt="Logo" class="h-20 bg-white p-2 rounded" />
       </div>
 
-      <div class="chart-container">
+      <div class="chart-container p-4">
         <!-- Dropdown Periode -->
-        <div class="dropdown">
-          <button class="dropdown-btn" onclick="toggleDropdown()">Periode <span id="selected-year">2024-2025</span>
-            <span class="menu-arrow">
-              <img src="./img/image/arrowdown.png" alt="Logo RTQ" height="15"/>
-            </span>
-            <div class="dropdown-content" id="dropdown-menu">
-              <div onclick="selectYear('2023-2024')">2023-2024</div>
-              <div onclick="selectYear('2024-2025')">2024-2025</div>
-              <div onclick="selectYear('2025-2026')">2025-2026</div>
-            </div>
-          </button>
-        </div>
+        <form method="GET" id="periodeForm" action="{{ route('dashboard') }}">
+          <div class="dropdown relative inline-block mb-6">
+            <button type="button"
+              class="dropdown-btn bg-[#A4E4B3] text-black border border-gray-300 rounded px-3 py-1.5 flex items-center gap-2 font-semibold text-sm"
+              onclick="toggleDropdown()">Periode:
+              <span id="selected-year">{{ $selectedPeriodeNama ?? 'Pilih Periode' }}</span>
+              <span class="menu-arrow">
+                <img src="{{ asset('img/image/arrowdown.png') }}" alt="arrowdown" class="h-3" />
+              </span>
+            </button>
 
-        <div class="button-group">
-          <button class="kehadiran-btn">Kehadiran</button>
-          <button class="hafalan-btn">Hafalan Santri</button>
-        </div>
+            <div
+              class="dropdown-content absolute hidden bg-white mt-1 border border-gray-200 rounded shadow-lg z-10 w-full"
+              id="dropdown-menu">
+              @foreach($periodes as $p)
+          <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+          onclick="selectYear('{{ $p->id }}', '{{ $p->tahun_ajaran }}')">{{ $p->tahun_ajaran }}</div>
+        @endforeach
+            </div>
+          </div>
+          <input type="hidden" name="periode_id" id="periodeInput" value="{{ $selectedPeriode }}">
+        </form>
 
         <!-- Cards -->
-        <div class="cards">
-          <div class="card">
-            <h2>Jumlah Kelas Yang Di Ajar</h2>
-            <p>3 Kelas</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-[#A4E4B3] p-6 rounded-xl shadow flex flex-col items-center justify-center text-center">
+            <h2 class="text-xl font-bold text-black">Jumlah Kelas Yang Di Ajar</h2>
+            <p class="text-lg mt-2 text-black">{{ $jumlahKelas }} Kelas</p>
+          </div>
+          <div class="bg-[#A4E4B3] p-6 rounded-xl shadow flex flex-col items-center justify-center text-center">
+            <h2 class="text-xl font-bold text-black">Jumlah Keterlambatan</h2>
+            <p class="text-lg mt-2 text-black">{{ $jumlahTelat }} Kegiatan</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- JS Dropdown Logic -->
+  <!-- JS Logic -->
   <script>
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('toggleSidebarBtn');
+
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      toggleBtn.classList.toggle('hidden'); 
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+        sidebar.classList.remove('active');
+        toggleBtn.classList.remove('hidden');
+      }
+    });
+
     function toggleDropdown() {
       const menu = document.getElementById('dropdown-menu');
       menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
     }
 
-    function selectYear(year) {
-      document.getElementById('selected-year').textContent = year;
-      document.getElementById('dropdown-menu').style.display = 'none';
+    function selectYear(id, tahun) {
+      document.getElementById('selected-year').textContent = tahun;
+      document.getElementById('periodeInput').value = id;
+      document.getElementById('periodeForm').submit();
     }
-    window.onclick = function(e) {
-      if (!e.target.matches('.dropdown-btn')) {
-        const dropdowns = document.getElementsByClassName("dropdown-content");
-        for (let i = 0; i < dropdowns.length; i++) {
-          dropdowns[i].style.display = "none";
-        }
+
+    window.onclick = function (e) {
+      if (!e.target.closest('.dropdown')) {
+        document.getElementById("dropdown-menu").style.display = "none";
       }
     }
   </script>
 </body>
+
 </html>

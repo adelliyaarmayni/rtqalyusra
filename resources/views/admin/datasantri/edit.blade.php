@@ -1,260 +1,231 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RTQ Al-Yusra | Edit Data Santri</title>
-  <link rel="shortcut icon" href="./img/image/logortq.png" type="image/x-icon">
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      background-color: #f0f0f0;
-    }
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
-    .sidebar {
-      width: 220px;
-      background-color: #ffffff;
-      padding: 20px;
-      border-right: 1px solid #ddd;
-      flex-shrink: 0;
-    }
-    .sidebar a {
-      display: block;
-      padding: 10px;
-      margin-bottom: 10px;
-      text-decoration: none;
-      color: black;
-      border-radius: 8px;
-    }
-    .sidebar a.active,
-    .sidebar a:hover {
-      background-color: #a4e4b3;
-    }
-    .main {
-      flex: 1;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    .form-container {
-      background-color: white;
-      padding: 20px;
-      border-radius: 12px;
-      width: 100%;
-      margin-top: 10px;
-      flex: 1;
-    }
-    .form-content {
-      max-width: 900px;
-      width: 100%;
-    }
-    .form-group {
-      margin-bottom: 15px;
-      width: 100%;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-      font-size: 14px; 
-      color: #555;
-    }
-    .form-group.small-label label {
-      font-size: 13px; 
-    }
-    select, input[type="text"], input[type="date"] {  
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px; 
-    }
-    
-    .date-input-wrapper {
-      position: relative;
-      width: 100%;
-    }
-    .date-input-wrapper::before {
-      content: "Masukan Tanggal Lahir";
-      position: absolute;
-      left: 9px;
-      top: 8px;
-      color: #000;
-      pointer-events: none;
-      font-size: 14px;
-    }
-    input[type="date"] {
-      appearance: none;
-      position: relative;
-      z-index: 1;
-      background-color: transparent;
-      color: transparent; 
-    }
-    input[type="date"]:valid,
-    input[type="date"]:focus {
-      color: #000; 
-    }
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      position: absolute;
-      right: 8px;
-      z-index: 2;
-      opacity: 1;
-    }
-    select {
-      appearance: none;
-      background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
-      background-repeat: no-repeat;
-      background-position-x: 95%;
-      background-position-y: center;
-      background-size: 16px; 
-    }
-    .button-group {
-      display: flex;
-      justify-content: flex-start; 
-      gap: 10px;
-      margin-top: 20px;
-      width: 100%;
-    }
-    .button-group button {
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px; 
-    }
-    .cancel-btn {
-      background-color: #f0f0f0;
-      border: 1px solid #ddd;
-    }
-    .add-btn {
-      background-color: #a4e4b3;
-      border: none;
-    }
-    
-    input[type="text"]::placeholder {
-      color: #000;
-    }
-  </style>
+  <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" type="image/x-icon">
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
-<body>
 
-<div class="container">
+<body>
+  <div class="container">
     <!-- Sidebar -->
     <div class="sidebar">
-      <div style="text-align:center; margin-bottom:20px;">
-        <div style="font-size:40px;">👤</div>
-        <strong>Admin</strong>
+      <!-- Profil & Logout -->
+      <div class="sidebar-header">
+        <!-- Profil -->
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="{{ asset('img/image/akun.png') }}" alt="Foto Admin"
+            style="width: 40px; height: 40px; border-radius: 40%;">
+          <strong>Admin</strong>
+        </div>
+
+        <!-- Tombol Logout -->
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" style="background: none; border: none; cursor: pointer;">
+            <img src="{{ asset('img/image/logout.png') }}" alt="Logout" style="width: 18px; height: 18px;">
+          </button>
+        </form>
       </div>
-      <a href="#">Dashboard</a>
-      <a href="#">Jadwal Mengajar</a>
-      <a href="#">Data Guru</a>
-      <a href="#" class="active">Data Santri</a>
-      <a href="#">Kelola Pengguna</a>
-      <a href="#">Periode</a>
-      <a href="#">Kategori Penilaian</a>
-      <a href="#">Kehadiran</a>
-      <a href="#">Hafalan Santri</a>
-      <a href="#">Kinerja Guru</a>
+
+      <!-- Menu -->
+      <a href="{{ route('dashboard') }}">Dashboard</a>
+      <a href="{{ route('admin.jadwalmengajar.index') }}">Jadwal Mengajar</a>
+      <a href="{{ route('admin.dataguru.index') }}">Data Guru</a>
+      <a href="{{ route('admin.datasantri.index') }}" class="active">Data Santri</a>
+      <a href="{{ route('admin.kelolapengguna.index') }}">Kelola Pengguna</a>
+      <a href="{{ route('admin.periode.index') }}">Periode</a>
+      <a href="{{ route('admin.kategoripenilaian.index') }}">Kategori Penilaian</a>
+      <a href="{{ route('admin.kehadiranA.index') }}">Kehadiran</a>
+      <a href="{{ route('admin.hafalanadmin.index') }}">Hafalan Santri</a>
+      <a href="{{ route('admin.kinerjaguru.index') }}">Kinerja Guru</a>
     </div>
 
     <!-- Main Content -->
     <div class="main">
       <div class="topbar">
         <h1>Edit Data Santri</h1>
-        <img src="./img/image/logortq.png" alt="Logo RTQ" height="80"/>
+        <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" />
       </div>
 
-      <!-- Form Tambah Data Guru -->
       <div class="form-container">
-        <div class="form-group">
-          <input type="text" name="namaguru" id="namaguru" placeholder="Masukan Nama Guru" required>
-        </div>
-        
-        <div class="form-group">
-          <input type="text" name="tempatlahir" id="tempatlahir" placeholder="Masukan Tempat Lahir" required>
-        </div>
-        
-        <div class="form-group">
-          <div class="date-input-wrapper">
-            <input type="date" name="tanggal_lahir" id="tanggal_lahir" required onfocus="this.showPicker()">
-          </div>
-        </div>
+        <div class="form-content">
+          <form action="{{ route('admin.datasantri.update', $santri->id) }}" method="POST"
+            enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
 
-        <div class="form-group">
-          <input type="text" name="asal" id="asal" placeholder="Masukan Asal" required>
-        </div>
+            <div class="form-group">
+              <input type="text" name="nama_santri" placeholder="Masukan Nama Santri"
+                value="{{ old('nama_santri', $santri->nama_santri) }}" required>
+            </div>
 
-        <div class="form-group small-label">
-          <select name="Kelas" id="Kelas" required>
-            <option value="" disabled selected>Masukan Kelas</option>
-            <option value="kelasA">Kelas A</option>
-            <option value="kelasB">Kelas B</option>
-          </select>
-        </div>
+            <div class="form-group">
+              <input type="text" name="tempat_lahir" placeholder="Masukan Tempat Lahir"
+                value="{{ old('tempat_lahir', $santri->tempat_lahir) }}" required>
+            </div>
 
-        <div class="form-group small-label">
-          <select name="jeniskelas" id="jeniskelas" required>
-            <option value="" disabled selected>Jenis Kelas</option>
-            <option value="1tahun">1 Tahun</option>
-            <option value="2tahun">2 Tahun</option>
-          </select>
-        </div>
-        
-        <div class="form-group small-label">
-          <select name="cabang" id="cabang" required>
-            <option value="" disabled selected>Masukan Cabang</option>
-            <option value="sukajadi">Sukajadi</option>
-            <option value="rumbai">Rumbai</option>
-            <option value="gobah">Gobah</option>
-            <option value="kubang">Kubang</option>
-          </select>
-        </div>
-        
-        <div class="button-group">
-          <button class="cancel-btn">Cancel</button>
-          <button class="add-btn">Update</button>
+            <div class="form-group date-wrapper">
+              <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $santri->tanggal_lahir) }}"
+                required>
+            </div>
+
+            <div class="form-group">
+              <input type="text" name="asal" placeholder="Masukan Asal" value="{{ old('asal', $santri->asal) }}"
+                required>
+            </div>
+
+            <div class="form-group">
+              <input type="text" name="nis" placeholder="Masukan NIS" value="{{ old('nis', $santri->nis) }}" required>
+            </div>
+
+            <div class="form-group">
+              <input type="text" name="email" placeholder="Masukan Email" value="{{ old('email', $santri->email) }}"
+                required>
+            </div>
+
+            <div class="form-group">
+              <input type="text" name="asal_sekolah" placeholder="Masukan Asal Sekolah"
+                value="{{ old('asal_sekolah', $santri->asal_sekolah) }}" required>
+            </div>
+
+            <div class="form-group">
+              <input type="text" name="nama_ortu" placeholder="Masukan Nama Orang Tua"
+                value="{{ old('nama_ortu', $santri->nama_ortu) }}" required>
+            </div>
+
+            <div class="form-group">
+              <input type="text" name="NoHP_ortu" placeholder="Masukan No HP Orang Tua"
+                value="{{ old('NoHP_ortu', $santri->NoHP_ortu) }}" required>
+            </div>
+
+            <div class="form-group">
+              <input type="text" name="pekerjaan_ortu" placeholder="Masukan Pekerjaan Orang Tua"
+                value="{{ old('pekerjaan_ortu', $santri->pekerjaan_ortu) }}" required>
+            </div>
+
+            <!-- Dropdown MK -->
+            <div class="form-group">
+              <select name="MK" required>
+                <option value="" disabled {{ old('MK', $santri->MK) ? '' : 'selected' }}>Masukan MK</option>
+                @foreach(['Si', 'Se', 'Ti', 'Te', 'In', 'Fi', 'Fe', 'Ii', 'Ie'] as $mk)
+          <option value="{{ $mk }}" {{ old('MK', $santri->MK) == $mk ? 'selected' : '' }}>{{ $mk }}</option>
+        @endforeach
+              </select>
+            </div>
+
+            <!-- Dropdown Golongan Darah -->
+            <div class="form-group">
+              <select name="GolDar" required>
+                <option value="" disabled {{ old('GolDar', $santri->GolDar) ? '' : 'selected' }}>Masukan Golongan Darah
+                </option>
+                @foreach(['A', 'AB', 'B', 'O'] as $gd)
+          <option value="{{ $gd }}" {{ old('GolDar', $santri->GolDar) == $gd ? 'selected' : '' }}>{{ $gd }}</option>
+        @endforeach
+              </select>
+            </div>
+
+            <!-- Dropdown Jenis Kelamin -->
+            <div class="form-group">
+              <select name="jenis_kelamin" required>
+                <option value="" disabled {{ old('jenis_kelamin', $santri->jenis_kelamin) ? '' : 'selected' }}>Masukan
+                  Jenis Kelamin</option>
+                <option value="P" {{ old('jenis_kelamin', $santri->jenis_kelamin) == 'P' ? 'selected' : '' }}>Perempuan
+                </option>
+                <option value="L" {{ old('jenis_kelamin', $santri->jenis_kelamin) == 'L' ? 'selected' : '' }}>Laki-Laki
+                </option>
+              </select>
+            </div>
+
+            <!-- Dropdown Kategori Masuk -->
+            <div class="form-group">
+              <select name="kat_masuk" required>
+                <option value="" disabled {{ old('kat_masuk', $santri->kat_masuk) ? '' : 'selected' }}>Masukan Kategori
+                  Masuk</option>
+                <option value="Umum" {{ old('kat_masuk', $santri->kat_masuk) == 'Umum' ? 'selected' : '' }}>Umum</option>
+                <option value="Beasiswa" {{ old('kat_masuk', $santri->kat_masuk) == 'Beasiswa' ? 'selected' : '' }}>
+                  Beasiswa</option>
+              </select>
+            </div>
+
+            <!-- Dropdown Kelas -->
+            <div class="form-group">
+              <select name="kelas" required>
+                <option value="" disabled {{ old('kelas', $santri->kelas) ? '' : 'selected' }}>Masukan Kelas</option>
+                <option value="Halaqah A" {{ old('kelas', $santri->kelas) == 'Halaqah A' ? 'selected' : '' }}>Halaqah A</option>
+                <option value="Halaqah B" {{ old('kelas', $santri->kelas) == 'Halaqah B' ? 'selected' : '' }}>Halaqah B</option>
+                <option value="Halaqah C" {{ old('kelas', $santri->kelas) == 'Halaqah C' ? 'selected' : '' }}>Halaqah C</option>
+                <option value="Halaqah D" {{ old('kelas', $santri->kelas) == 'Halaqah D' ? 'selected' : '' }}>Halaqah D</option>
+                <option value="Halaqah E" {{ old('kelas', $santri->kelas) == 'Halaqah E' ? 'selected' : '' }}>Halaqah E</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <select name="periode_id" required>
+                <option value="" disabled {{ old('periode_id', $santri->periode_id) ? '' : 'selected' }}>Pilih Periode
+                </option>
+                @foreach($periodes as $periode)
+          <option value="{{ $periode->id }}" {{ old('periode_id', $santri->periode_id) == $periode->id ? 'selected' : '' }}>
+            {{ $periode->tahun_ajaran }}
+          </option>
+        @endforeach
+              </select>
+            </div>
+
+            <!-- Dropdown Jenis Kelas -->
+            <div class="form-group">
+              <select name="jenis_kelas" required>
+                <option value="" disabled {{ old('jenis_kelas', $santri->jenis_kelas) ? '' : 'selected' }}>Jenis Kelas
+                </option>
+                <option value="1 Tahun" {{ old('jenis_kelas', $santri->jenis_kelas) == '1 Tahun' ? 'selected' : '' }}>1
+                  Tahun</option>
+                <option value="2 Tahun" {{ old('jenis_kelas', $santri->jenis_kelas) == '2 Tahun' ? 'selected' : '' }}>2
+                  Tahun</option>
+              </select>
+            </div>
+
+            <!-- Dropdown Cabang -->
+            <div class="form-group">
+              <select name="cabang" required>
+                <option value="" disabled {{ old('cabang', $santri->cabang) ? '' : 'selected' }}>Masukan Cabang</option>
+                @foreach(['Sukajadi', 'Rumbai', 'Gobah 1', 'Gobah 2', 'Rawa Bening'] as $cabang)
+          <option value="{{ $cabang }}" {{ old('cabang', $santri->cabang) == $cabang ? 'selected' : '' }}>
+            {{ $cabang }}</option>
+        @endforeach
+              </select>
+            </div>
+
+            <div class="button-group">
+              <a href="{{ route('admin.datasantri.index') }}" class="cancel-btn">Cancel</a>
+              <button class="add-btn" type="submit">Update</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
-</div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const input = document.getElementById('tanggal_lahir');
+      const label = document.querySelector('.date-placeholder');
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const dateInput = document.getElementById('tanggal_lahir');
-    
-    dateInput.addEventListener('change', function() {
-      if(this.value) {
-        this.style.color = '#000';
-      } else {
-        this.style.color = 'transparent';
+      function toggleLabel() {
+        if (input.value) {
+          label.style.opacity = '0';
+          label.style.visibility = 'hidden';
+        } else {
+          label.style.opacity = '1';
+          label.style.visibility = 'visible';
+        }
       }
-    });
-    
-    dateInput.addEventListener('focus', function() {
-      this.style.color = '#000';
-    });
-    
-    dateInput.addEventListener('blur', function() {
-      if(!this.value) {
-        this.style.color = 'transparent';
-      }
-    });
-    
-    if(!dateInput.value) {
-      dateInput.style.color = 'transparent';
-    }
-  });
-</script>
 
+      input.addEventListener('input', toggleLabel);
+      toggleLabel();
+    });
+  </script>
 </body>
+
 </html>

@@ -1,109 +1,39 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RTQ Al-Yusra | Kelola Pengguna</title>
-  <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" type="image/x-icon">
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      background-color: #f0f0f0;
-    }
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
-    .sidebar {
-      width: 220px;
-      background-color: #ffffff;
-      padding: 20px;
-      border-right: 1px solid #ddd;
-    }
-    .sidebar a {
-      display: block;
-      padding: 10px;
-      margin-bottom: 10px;
-      text-decoration: none;
-      color: black;
-      border-radius: 8px;
-    }
-    .sidebar a.active,
-    .sidebar a:hover {
-      background-color: #a4e4b3;
-    }
-    .main {
-      flex: 1;
-      padding: 20px;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .chart-container {
-      background-color: white;
-      padding: 20px;
-      border-radius: 12px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-      text-align: center;
-    }
-    th {
-      background-color: #e2e8f0;
-    }
-    .status-toggle {
-      display: flex;
-      border-radius: 5px;
-      overflow: hidden;
-      width: 150px;
-      margin: 0 auto;
-    }
-    .status-toggle button {
-      flex: 1;
-      padding: 5px 10px;
-      border: none;
-      cursor: pointer;
-      font-size: 12px;
-      transition: all 0.3s;
-    }
-    .status-toggle button.active {
-      background-color: #4CAF50;
-      color: white;
-    }
-    .status-toggle button.inactive {
-      background-color: #f44336;
-      color: white;
-    }
-    .add-btn {
-      background-color: #a4e4b3;
-      color: black;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-  </style>
+  <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" type="image/x-icon">
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
+
 <body>
 
   <div class="container">
     <!-- Sidebar -->
     <div class="sidebar">
-      <div style="text-align:center; margin-bottom:20px;">
-        <div style="font-size:40px;">👤</div>
-        <strong>Admin</strong>
+      <!-- Profil & Logout -->
+      <div class="sidebar-header">
+        <!-- Profil -->
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="{{ asset('img/image/akun.png') }}" alt="Foto Admin"
+            style="width: 40px; height: 40px; border-radius: 40%;">
+          <strong>Admin</strong>
+        </div>
+
+        <!-- Tombol Logout -->
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" style="background: none; border: none; cursor: pointer;">
+            <img src="{{ asset('img/image/logout.png') }}" alt="Logout" style="width: 18px; height: 18px;">
+          </button>
+        </form>
       </div>
-      <a href="{{ route('admin.dashboard') }}" >Dashboard</a>
+
+      <!-- Menu -->
+      <a href="{{ route('dashboard') }}">Dashboard</a>
       <a href="{{ route('admin.jadwalmengajar.index') }}">Jadwal Mengajar</a>
       <a href="{{ route('admin.dataguru.index') }}">Data Guru</a>
       <a href="{{ route('admin.datasantri.index') }}">Data Santri</a>
@@ -119,13 +49,26 @@
     <div class="main">
       <div class="topbar">
         <h1>Daftar Pengguna</h1>
-        <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100"/>
+        <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" />
       </div>
 
+      @if (session('success'))
+      <div class="alert-success">
+      {{ session('success') }}
+      </div>
+    @endif
+
+      @if (session('error'))
+      <div class="alert-error">
+      {{ session('error') }}
+      </div>
+    @endif
+    
       <div class="chart-container">
-        <a href="{{ route('admin.kelolapengguna.tambah') }}">
-          <button class="add-btn">Add</button>
+        <a href="{{ route('admin.kelolapengguna.create') }}">
+          <button class="pkp-add-btn">Add</button>
         </a>
+
         <div style="overflow-x:auto; margin-top: 20px;">
           <table>
             <thead>
@@ -135,21 +78,32 @@
                 <th>Email</th>
                 <th>Role</th>
                 <th>Status</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>Fulanah</td>
-                <td>fulanah@gmail.com</td>
-                <td>Guru</td>
-                <td>
-                  <div class="status-toggle">
-                    <button class="active">Aktif</button>
-                    <button class="inactive">Nonaktif</button>
-                  </div>
-                </td>
-              </tr>
+              @forelse($users as $user)
+            <tr>
+            <td>{{ $loop->iteration }}</td>
+            <td>{{ $user->name }}</td>
+            <td>{{ $user->email }}</td>
+            <td>
+              @foreach ($user->getRoleNames() as $role)
+          <span class="badge bg-success">{{ $role }}</span>
+          @endforeach
+            </td>
+            <td>{{ $user->is_active ? 'Aktif' : 'Tidak Aktif' }}</td>
+            <td class="action-buttons">
+              <a href="{{ route('admin.kelolapengguna.edit', $user->id) }}">
+              <button><img src="{{ asset('img/image/edit.png') }}" alt="edit" height="100" /></button>
+              </a>
+            </td>
+            </tr>
+        @empty
+          <tr>
+          <td colspan="5">Belum ada pengguna.</td>
+          </tr>
+        @endforelse
             </tbody>
           </table>
         </div>
@@ -158,19 +112,23 @@
   </div>
 
   <script>
-    // Toggle status aktif/nonaktif
-    document.querySelectorAll('.status-toggle button').forEach(button => {
-      button.addEventListener('click', function() {
-        const parent = this.parentElement;
-        parent.querySelectorAll('button').forEach(btn => {
-          btn.classList.remove('active', 'inactive');
-          btn.style.opacity = '0.6';
-        });
-        this.classList.add(this.textContent === 'Aktif' ? 'active' : 'inactive');
-        this.style.opacity = '1';
-      });
-    });
-  </script>
+  setTimeout(() => {
+    const success = document.querySelector('.alert-success');
+    const error = document.querySelector('.alert-error');
 
+    if (success) {
+      success.style.transition = 'opacity 0.5s ease-out';
+      success.style.opacity = '0';
+      setTimeout(() => success.remove(), 500); 
+    }
+
+    if (error) {
+      error.style.transition = 'opacity 0.5s ease-out';
+      error.style.opacity = '0';
+      setTimeout(() => error.remove(), 500); 
+    }
+  }, 2000); 
+</script>
 </body>
+
 </html>

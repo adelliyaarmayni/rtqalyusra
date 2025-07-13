@@ -1,158 +1,40 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RTQ Al-Yusra | Hafalan Santri</title>
   <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" type="image/x-icon">
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: sans-serif;
-    }
-    body {
-      background-color: #f0f0f0;
-    }
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
-    .sidebar {
-      width: 220px;
-      background: #fff;
-      padding: 20px;
-      border-right: 1px solid #ddd;
-    }
-    .sidebar-header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .avatar {
-      font-size: 40px;
-      margin-bottom: 5px;
-    }
-    .sidebar a {
-      display: block;
-      padding: 10px;
-      text-decoration: none;
-      color: #000;
-      margin-bottom: 10px;
-      border-radius: 8px;
-    }
-    .sidebar a.active,
-    .sidebar a:hover {
-      background-color: #a4e4b3;
-    }
-    .main {
-      flex: 1;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .topbar img {
-      height: 60px;
-    }
-    .form-container {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .table-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 20px;
-    }
-    .table-controls select,
-    .table-controls input {
-      padding: 5px 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    .table-controls button {
-      background-color: #a4e4b3;
-      color: black;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    .table-controls button:hover {
-      background-color: #a4e4b3;
-    }
-    table {
-      width: 80%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-    th {
-      background-color: #e2e8f0;
-    }
-    th, td {
-    text-align: center;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .form-row {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .form-item {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-width: 200px; 
-    }
-    select, input[type="date"] {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px;
-      background: white;
-      width: auto; 
-      min-width: 100px; 
-    }
-    .button-row {
-      display: flex;
-      justify-content: flex-end;
-    }
-    h1 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-  </style>
+  <!-- style css -->
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
+
 <body>
 
-<div class="container">
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <div class="avatar">👤</div>
-      <strong>Admin</strong>
-    </div>
-    <a href="{{ route('admin.dashboard') }}" >Dashboard</a>
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Profil & Logout -->
+      <div class="sidebar-header">
+        <!-- Profil -->
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="{{ asset('img/image/akun.png') }}" alt="Foto Admin"
+            style="width: 40px; height: 40px; border-radius: 40%;">
+          <strong>Admin</strong>
+        </div>
+
+        <!-- Tombol Logout -->
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" style="background: none; border: none; cursor: pointer;">
+            <img src="{{ asset('img/image/logout.png') }}" alt="Logout" style="width: 18px; height: 18px;">
+          </button>
+        </form>
+      </div>
+
+      <!-- Menu -->
+      <a href="{{ route('dashboard') }}">Dashboard</a>
       <a href="{{ route('admin.jadwalmengajar.index') }}">Jadwal Mengajar</a>
       <a href="{{ route('admin.dataguru.index') }}">Data Guru</a>
       <a href="{{ route('admin.datasantri.index') }}">Data Santri</a>
@@ -162,106 +44,112 @@
       <a href="{{ route('admin.kehadiranA.index') }}">Kehadiran</a>
       <a href="{{ route('admin.hafalanadmin.index') }}" class="active">Hafalan Santri</a>
       <a href="{{ route('admin.kinerjaguru.index') }}">Kinerja Guru</a>
-  </div>
-
-  <!-- Main Content -->
-  <div class="main">
-    <div class="topbar">
-      <h1>Detail Hafalan Santri</h1>
-      <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100"/>
     </div>
 
-    <div class="form-container">
-      <div class="form-group">
+    <!-- Main Content -->
+    <div class="main">
+      <div class="topbar">
+        <h1>Detail Hafalan Santri</h1>
+        <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" />
+      </div>
 
-        <!-- Periode -->
-        <div class="form-row">
-          <div class="form-item">
-            <select id="periode">
-              <option value="periode">Pilih Periode</option>
-              <option value="2024-2025">2024-2025</option>
-              <option value="2025-2026">2025-2026</option>
-            </select>
+      <div class="ka-form-container">
+        <div class="kd-form-group">
+          <div class="gki-form-row">
+
+          {{-- tambahan tambahan tambahan --}}
+            <div class="gki-form-item">
+              <div class="gki-info-box">Periode {{ $periode->tahun_ajaran ?? '-' }}</div>
+            </div>
+            <div class="gki-form-item">
+              <div class="gki-info-box">{{ ucfirst($cabang) }}</div>
+            </div>
+          </div>
+
+          <div class="gki-form-row">
+            <div class="gki-form-item">
+              <div class="gki-info-box">{{ $guru->nama_guru ?? '-' }}</div>
+            </div>
+            <div class="gki-form-item">
+              <div class="gki-info-box">{{ $kelas }}</div>
+            </div>
+          </div>
+
+          <div class="gki-form-row">
+            <div class="gki-form-item">
+              <div class="gki-info-box">{{ \Carbon\Carbon::parse($tanggal)->format('d/m/Y') }}</div>
+            </div>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nama Santri</th>
+                  <th>Surah</th>
+                  <th>Juz</th>
+                  <th>Ayat</th>
+                </tr>
+              </thead>
+              <tbody>
+              {{-- tambahan tambahan tambahan --}}
+                @foreach($hafalan as $i => $item)
+                <tr>
+                  <td>{{ $loop->iteration + ($hafalan->currentPage() - 1) * $hafalan->perPage() }}</td>
+                  <td>{{ $item->santri->nama_santri ?? '-' }}</td>
+                  <td>{{ $item->surah }}</td>
+                  <td>{{ $item->juz }}</td>
+                  <td>{{ $item->ayat_awal }} - {{ $item->ayat_akhir }}</td>
+                </tr>
+                @endforeach
+              </tbody>
+            </table>
+
+            @if ($hafalan->total() > 0)
+              <div class="pagination">
+                Showing {{ $hafalan->firstItem() }} to {{ $hafalan->lastItem() }} of {{ $hafalan->total() }} entries
+              </div>
+            @endif
+
+            @if ($hafalan->hasPages())
+              <div class="box-pagination-left">
+                {{-- Tombol Previous --}}
+                @if ($hafalan->onFirstPage())
+                  <span class="page-box-small disabled">«</span>
+                @else
+                  <a href="{{ $hafalan->previousPageUrl() }}" class="page-box-small">«</a>
+                @endif
+
+                {{-- Nomor Halaman --}}
+                @foreach ($hafalan->getUrlRange(1, $hafalan->lastPage()) as $page => $url)
+                  @if ($page == $hafalan->currentPage())
+                    <span class="page-box-small active">{{ $page }}</span>
+                  @else
+                    <a href="{{ $url }}" class="page-box-small">{{ $page }}</a>
+                  @endif
+                @endforeach
+
+                {{-- Tombol Next --}}
+                @if ($hafalan->hasMorePages())
+                  <a href="{{ $hafalan->nextPageUrl() }}" class="page-box-small">»</a>
+                @else
+                  <span class="page-box-small disabled">»</span>
+                @endif
+              </div>
+            @endif
+
+          </div>
+          <div class="gki-button-group">
+            <a href="{{ route('admin.hafalanadmin.index') }}">
+              <button class="gki-input-btn">Kembali</button>
+            </a>
           </div>
         </div>
-
-        <!-- Guru dan Kelas -->
-        <div class="form-row">
-          <div class="form-item">
-            <select id="guru">
-              <option value="guru">Pilih Nama Guru</option>
-              <option value="Fulanah">Fulanah, S.Ag</option>
-              <option value="Other">Guru Lain</option>
-            </select>
-          </div>
-          <div class="form-item">
-            <select id="kelas">
-              <option value="kelas">Pilih Kelas</option>
-              <option value="Kelas A">Kelas A</option>
-              <option value="Kelas B">Kelas B</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Tanggal dan Kegiatan -->
-        <div class="form-row">
-          <div class="form-item">
-            <input type="date" id="tanggal">
-          </div>
-        </div>
-
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Nama Santri</th>
-                <th>Surah</th>
-                <th>Juz</th>
-                <th>Ayat</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>Della Adelliya Armayni</td>
-                <td>Al-Baqarah</td>
-                <td>1</td>
-                <td>187</td>
-              </tr>
-            </tbody>
-            <tbody>
-              <tr>
-                <td>2</td>
-                <td>Della Adelliya Armayni</td>
-                <td>Al-Baqarah</td>
-                <td>1</td>
-                <td>187</td>
-              </tr>
-            </tbody><tbody>
-              <tr>
-                <td>3</td>
-                <td>Della Adelliya Armayni</td>
-                <td>Al-Baqarah</td>
-                <td>1</td>
-                <td>187</td>
-              </tr>
-            </tbody><tbody>
-              <tr>
-                <td>4</td>
-                <td>Della Adelliya Armayni</td>
-                <td>Al-Baqarah</td>
-                <td>1</td>
-                <td>187</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
       </div>
     </div>
   </div>
-</div>
 
 </body>
+
 </html>

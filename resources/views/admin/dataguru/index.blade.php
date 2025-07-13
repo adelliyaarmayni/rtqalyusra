@@ -1,171 +1,39 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RTQ Al-Yusra | Data Guru</title>
-  <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" type="image/x-icon">
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      background-color: #f0f0f0;
-    }
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
-    .sidebar {
-      width: 220px;
-      background-color: #ffffff;
-      padding: 20px;
-      border-right: 1px solid #ddd;
-    }
-    .sidebar a {
-      display: block;
-      padding: 10px;
-      margin-bottom: 10px;
-      text-decoration: none;
-      color: black;
-      border-radius: 8px;
-    }
-    .sidebar a.active,
-    .sidebar a:hover {
-      background-color: #a4e4b3;
-    }
-    .main {
-      flex: 1;
-      padding: 20px;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .dropdown {
-      position: relative;
-      display: inline-block;
-      margin-top: 20px;
-      margin-bottom: 20px;
-    }
-    .dropdown-btn {
-      background-color: #a4e4b3;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: white;
-      min-width: 160px;
-      box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
-      border-radius: 8px;
-      z-index: 1;
-      margin-top: 5px;
-    }
-    .dropdown-content div {
-      padding: 10px;
-      cursor: pointer;
-    }
-    .dropdown-content div:hover {
-      background-color: #f0f0f0;
-    }
-    .chart-container {
-      background-color: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 20px;
-    }
-    .table-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 20px;
-    }
-    .table-controls select,
-    .table-controls input {
-      padding: 5px 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    .table-controls button {
-      background-color: #a4e4b3;
-      color: black;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    .table-controls button:hover {
-      background-color: #a4e4b3;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-    th {
-      background-color: #e2e8f0;
-    }
-    .action-buttons button {
-      background-color: #a4e4b3;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 5px;
-      margin-right: 5px;
-      cursor: pointer;
-    }
-    .action-buttons button.delete {
-      background-color: #e63946;
-    }
-    .action-buttons img {
-      height: 20px;
-    }
-    .pagination {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 20px;
-      font-size: 14px;
-      color: gray;
-    }
-    .pagination-buttons button {
-      padding: 5px 10px;
-      margin-right: 5px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      cursor: pointer;
-      background-color: white;
-    }
-    .pagination-buttons button.active {
-      background-color: #a4e4b3;
-      border: none;
-      color: white;
-    }
-  </style>
+  <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" type="image/x-icon">
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
+
 <body>
 
   <div class="container">
     <!-- Sidebar -->
     <div class="sidebar">
-      <div style="text-align:center; margin-bottom:20px;">
-        <div style="font-size:40px;">👤</div>
-        <strong>Admin</strong>
+      <!-- Profil & Logout -->
+      <div class="sidebar-header">
+        <!-- Profil -->
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="{{ asset('img/image/akun.png') }}" alt="Foto Admin"
+            style="width: 40px; height: 40px; border-radius: 40%;">
+          <strong>Admin</strong>
+        </div>
+
+        <!-- Tombol Logout -->
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" style="background: none; border: none; cursor: pointer;">
+            <img src="{{ asset('img/image/logout.png') }}" alt="Logout" style="width: 18px; height: 18px;">
+          </button>
+        </form>
       </div>
-      <a href="{{ route('admin.dashboard') }}" >Dashboard</a>
+
+      <!-- Menu -->
+      <a href="{{ route('dashboard') }}">Dashboard</a>
       <a href="{{ route('admin.jadwalmengajar.index') }}">Jadwal Mengajar</a>
       <a href="{{ route('admin.dataguru.index') }}" class="active">Data Guru</a>
       <a href="{{ route('admin.datasantri.index') }}">Data Santri</a>
@@ -181,31 +49,41 @@
     <div class="main">
       <div class="topbar">
         <h1>Data Guru</h1>
-        <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100"/>
+        <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" />
       </div>
 
-      <!-- Tabel Jadwal Mengajar -->
-      <div class="chart-container">
+      @if (session('success'))
+      <div class="alert-success">
+      {{ session('success') }}
+      </div>
+    @endif
 
-        <!-- Kontrol Tabel -->
-        <div class="table-controls">
+      @if (session('error'))
+      <div class="alert-error">
+      {{ session('error') }}
+      </div>
+    @endif
+
+      <!-- Tabel Guru -->
+      <div class="chart-container">
+        <form method="GET" action="{{ route('admin.dataguru.index') }}" class="table-controls" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; align-items: center;">
           <div>
-            Show 
-            <select>
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-              <option>100</option>
-            </select> 
-            entries
+              Show
+              <select name="perPage" onchange="this.form.submit()">
+                  @foreach([10, 25, 50, 100] as $size)
+                      <option value="{{ $size }}" {{ request('perPage', 10) == $size ? 'selected' : '' }}>
+                          {{ $size }}
+                      </option>
+                  @endforeach
+              </select>
           </div>
-          <div style="display: flex; flex-direction: column; align-items: flex-end;">
-            <input type="text" placeholder="Search..." />
-            <a href="{{ route('admin.dataguru.tambah') }}">
-              <button>Add</button>
-            </a>
+          <div class="flex-column-end">
+              <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..." />
+              <a href="{{ route('admin.dataguru.create') }}">
+                  <button type="button" class="add-btn">Add</button>
+              </a>
           </div>
-        </div>
+      </form>
 
         <!-- Tabel -->
         <div style="overflow-x:auto;">
@@ -216,66 +94,122 @@
                 <th>Nama Guru</th>
                 <th>Tempat Lahir</th>
                 <th>Tanggal Lahir</th>
+                <th>Alamat</th>
+                <th>Jumlah Hafalan</th>
                 <th>Bagian</th>
                 <th>Cabang</th>
                 <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>Fulanah</td>
-                <td>Pekanbaru</td>
-                <td>17/05/1999</td>
-                <td>Kesantrian</td>
-                <td>Sukajadi</td>
-                <td class="action-buttons">
-                <button><img src="{{ asset('img/image/edit.png') }}" alt="edit" height="100"/></button>
-                <button class="delete"><img src="{{ asset('img/image/delete.png') }}" alt="delete" height="100"/></button>
-                </td>
-              </tr>
+              @forelse ($gurus as $index => $guru)
+          <tr>
+          <td>{{ $loop->iteration + ($gurus->currentPage() - 1) * $gurus->perPage() }}</td>
+          <td>{{ $guru->nama_guru }}</td>
+          <td>{{ $guru->tempat_lahir }}</td>
+          <td>{{ \Carbon\Carbon::parse($guru->tanggal_lahir)->format('d/m/Y') }}</td>
+          <td>{{ $guru->alamat }}</td>
+          <td>{{ $guru->jlh_hafalan ?? '-' }}</td>
+          <td>{{ $guru->bagian }}</td>
+          <td>{{ $guru->cabang }}</td>
+          <td class="action-buttons">
+            <a href="{{ route('admin.dataguru.edit', $guru->id) }}">
+            <button><img src="{{ asset('img/image/edit.png') }}" alt="edit" height="100" /></button>
+            </a>
+            <a href="{{ route('admin.dataguru.show', $guru->id) }}">
+            <button class="detail"><img src="{{ asset('img/image/detail.png') }}" alt="detail"
+              height="100" /></button>
+            </a>
+            <form action="{{ route('admin.dataguru.destroy', $guru->id) }}" method="POST"
+            onsubmit="return confirm('Yakin ingin menghapus?')" style="display:inline;">
+            @csrf
+            @method('DELETE')
+            <button class="delete"><img src="{{ asset('img/image/delete.png') }}" alt="delete"
+              height="100" /></button>
+            </form>
+          </td>
+          </tr>
+        @empty
+          <tr>
+          <td colspan="9" style="text-align: center;">Data guru belum tersedia.</td>
+          </tr>
+        @endforelse
             </tbody>
           </table>
         </div>
 
-        <!-- Pagination -->
-        <div class="pagination">
-          <div>Showing 1 to 10 of 200 entries</div>
-          <div class="pagination-buttons">
-            <button>«</button>
-            <button class="active">1</button>
-            <button>2</button>
-            <button>3</button>
-            <button>»</button>
+        @if ($gurus->total() > 0)
+          <div class="pagination">
+            Showing {{ $gurus->firstItem() }} to {{ $gurus->lastItem() }} of {{ $gurus->total() }} entries
           </div>
-        </div>
+        @endif
+
+        @if ($gurus->hasPages())
+          <div class="box-pagination-left">
+            {{-- Tombol Previous --}}
+            @if ($gurus->onFirstPage())
+              <span class="page-box-small disabled">«</span>
+            @else
+              <a href="{{ $gurus->previousPageUrl() }}" class="page-box-small">«</a>
+            @endif
+
+            {{-- Nomor Halaman --}}
+            @foreach ($gurus->getUrlRange(1, $gurus->lastPage()) as $page => $url)
+              @if ($page == $gurus->currentPage())
+                <span class="page-box-small active">{{ $page }}</span>
+              @else
+                <a href="{{ $url }}" class="page-box-small">{{ $page }}</a>
+              @endif
+            @endforeach
+
+            {{-- Tombol Next --}}
+            @if ($gurus->hasMorePages())
+              <a href="{{ $gurus->nextPageUrl() }}" class="page-box-small">»</a>
+            @else
+              <span class="page-box-small disabled">»</span>
+            @endif
+          </div>
+        @endif
 
       </div>
-
     </div>
   </div>
-
-  <!-- JS Dropdown Logic -->
   <script>
-    function toggleDropdown() {
-      const menu = document.getElementById('dropdown-menu');
-      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+  setTimeout(() => {
+    const success = document.querySelector('.alert-success');
+    const error = document.querySelector('.alert-error');
+
+    if (success) {
+      success.style.transition = 'opacity 0.5s ease-out';
+      success.style.opacity = '0';
+      setTimeout(() => success.remove(), 500); 
     }
 
-    function selectYear(year) {
-      document.getElementById('selected-year').textContent = year;
-      document.getElementById('dropdown-menu').style.display = 'none';
+    if (error) {
+      error.style.transition = 'opacity 0.5s ease-out';
+      error.style.opacity = '0';
+      setTimeout(() => error.remove(), 500); 
     }
+  }, 2000); 
 
-    window.onclick = function(e) {
-      if (!e.target.closest('.dropdown-btn')) {
-        const dropdowns = document.getElementsByClassName("dropdown-content");
-        for (let i = 0; i < dropdowns.length; i++) {
-          dropdowns[i].style.display = "none";
-        }
-      }
-    }
-  </script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const filterForm = document.getElementById('filterForm');
 
+    // Submit saat dropdown show per_page berubah
+    document.getElementById('per_page').addEventListener('change', function () {
+      filterForm.submit();
+    });
+
+    // Submit saat user mengetik search (delay 500ms)
+    let debounceTimer;
+    document.getElementById('search').addEventListener('input', function () {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        filterForm.submit();
+      }, 500);
+    });
+  });
+</script>
 </body>
+
 </html>

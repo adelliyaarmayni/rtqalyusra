@@ -5,152 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>RTQ Al-Yusra | Kategori Penilaian</title>
   <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" type="image/x-icon">
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      background-color: #f0f0f0;
-    }
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
-    .sidebar {
-      width: 220px;
-      background-color: #ffffff;
-      padding: 20px;
-      border-right: 1px solid #ddd;
-      flex-shrink: 0;
-    }
-    .sidebar a {
-      display: block;
-      padding: 10px;
-      margin-bottom: 10px;
-      text-decoration: none;
-      color: black;
-      border-radius: 8px;
-    }
-    .sidebar a.active,
-    .sidebar a:hover {
-      background-color: #a4e4b3;
-    }
-    .main {
-      flex: 1;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    .form-container {
-      background-color: white;
-      padding: 20px;
-      border-radius: 12px;
-      width: 100%;
-      margin-top: 10px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-    .form-header {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .form-header::before {
-      content: "";
-      display: inline-block;
-      width: 4px;
-      height: 20px;
-      background-color: #a4e4b3;
-    }
-    .form-group {
-      display: flex;
-      gap: 20px;
-      align-items: flex-end;
-      margin-bottom: 20px;
-    }
-    .form-item {
-      display: flex;
-      flex-direction: column;
-      width: 300px; 
-    }
-    .form-item label {
-      margin-bottom: 5px;
-      font-size: 14px;
-      color: black;
-    }
-    select, input[type="text"] {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px;
-      appearance: none;
-      background-color: white;
-      width: 100%;
-    }
-    select {
-      background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
-      background-repeat: no-repeat;
-      background-position-x: 95%;
-      background-position-y: center;
-      background-size: 16px;
-    }
-    .add-btn {
-      padding: 8px 20px;
-      background-color: #a4e4b3;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      height: 38px;
-    }
-    table {
-      width: 30%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      padding: 12px 15px;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
-    th {
-      background-color: #f9f9f9;
-      font-weight: bold;
-    }
-    tr:hover {
-      background-color: #f5f5f5;
-    }
-    .sidebar-header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .sidebar-header .avatar {
-      font-size: 40px;
-    }
-  </style>
+  <!-- style css -->
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body>
 
 <div class="container">
   <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <div class="avatar">👤</div>
-      <strong>Admin</strong>
-    </div>
-    <a href="{{ route('admin.dashboard') }}" >Dashboard</a>
+    <div class="sidebar">
+      <!-- Profil & Logout -->
+      <div class="sidebar-header">
+        <!-- Profil -->
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="{{ asset('img/image/akun.png') }}" alt="Foto Admin"
+            style="width: 40px; height: 40px; border-radius: 40%;">
+          <strong>Admin</strong>
+        </div>
+
+        <!-- Tombol Logout -->
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" style="background: none; border: none; cursor: pointer;">
+            <img src="{{ asset('img/image/logout.png') }}" alt="Logout" style="width: 18px; height: 18px;">
+          </button>
+        </form>
+      </div>
+
+      <!-- Menu -->
+      <a href="{{ route('dashboard') }}">Dashboard</a>
       <a href="{{ route('admin.jadwalmengajar.index') }}">Jadwal Mengajar</a>
       <a href="{{ route('admin.dataguru.index') }}">Data Guru</a>
       <a href="{{ route('admin.datasantri.index') }}">Data Santri</a>
@@ -160,7 +42,7 @@
       <a href="{{ route('admin.kehadiranA.index') }}">Kehadiran</a>
       <a href="{{ route('admin.hafalanadmin.index') }}">Hafalan Santri</a>
       <a href="{{ route('admin.kinerjaguru.index') }}">Kinerja Guru</a>
-  </div>
+    </div>
 
   <!-- Main Content -->
   <div class="main">
@@ -169,45 +51,80 @@
       <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100"/>
     </div>
 
-    <!-- Form and Table -->
-    <div class="form-container">
-      <!-- Form -->
-      <div class="form-group">
-        <div class="form-item">
-            <label for="kategorinilai">Kategori Penilaian</label>
-                <input type="text" name="namaguru" id="namaguru" placeholder="" required>
-        </div>
-        <a href="{{ route('admin.kategoripenilaian.index') }}">
-          <button class="add-btn">Add</button>
-        </a>
+    @if (session('success'))
+      <div class="alert-success">
+      {{ session('success') }}
       </div>
+    @endif
 
-      <!-- Table -->
-      <table>
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>Kategori Penilaian</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>Ketepatan Waktu Kehadiran</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Sikap Mengajar</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Akhlak</td>
-          </tr>
-        </tbody>
-      </table>
+      @if (session('error'))
+      <div class="alert-error">
+      {{ session('error') }}
+      </div>
+    @endif
+
+    <div class="ka-form-container">
+        <div class="kg-form-group">
+
+        <!-- Form and Table -->
+        <div class="form-container">
+          <!-- Form -->
+          <form action="{{ route('admin.kategoripenilaian.store') }}" method="POST">
+            @csrf
+            <div class="form-group">
+              <div class="form-item">
+                <label for="kategorinilai">Kategori Penilaian</label>
+                <input type="text" name="kategori" id="kategorinilai" placeholder="Masukkan Kategori Penilaian" required>
+              </div>
+              <button type="submit" class="pkp-add-btn">Add</button>
+            </div>
+          </form>
+
+          <!-- Table -->
+          <table>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Kategori Penilaian</th>
+              </tr>
+            </thead>
+            <tbody>
+              @forelse($kategoris as $index => $kategori)
+                <tr>
+                  <td>{{ $index + 1 }}</td>
+                  <td>{{ $kategori->kategori }}</td>
+                </tr>
+              @empty
+                <tr>
+                  <td colspan="2">Belum ada kategori penilaian.</td>
+                </tr>
+              @endforelse
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<script>
+  setTimeout(() => {
+    const success = document.querySelector('.alert-success');
+    const error = document.querySelector('.alert-error');
+
+    if (success) {
+      success.style.transition = 'opacity 0.5s ease-out';
+      success.style.opacity = '0';
+      setTimeout(() => success.remove(), 500); 
+    }
+
+    if (error) {
+      error.style.transition = 'opacity 0.5s ease-out';
+      error.style.opacity = '0';
+      setTimeout(() => error.remove(), 500); 
+    }
+  }, 2000); 
+</script>
 
 </body>
 </html>

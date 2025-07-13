@@ -1,161 +1,39 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RTQ Al-Yusra | Tambah Data Santri</title>
-  <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" type="image/x-icon">
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      background-color: #f0f0f0;
-    }
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
-    .sidebar {
-      width: 220px;
-      background-color: #ffffff;
-      padding: 20px;
-      border-right: 1px solid #ddd;
-      flex-shrink: 0;
-    }
-    .sidebar a {
-      display: block;
-      padding: 10px;
-      margin-bottom: 10px;
-      text-decoration: none;
-      color: black;
-      border-radius: 8px;
-    }
-    .sidebar a.active,
-    .sidebar a:hover {
-      background-color: #a4e4b3;
-    }
-    .main {
-      flex: 1;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    .form-container {
-      background-color: white;
-      padding: 20px;
-      border-radius: 12px;
-      width: 100%;
-      margin-top: 10px;
-      flex: 1;
-    }
-    .form-content {
-      max-width: 900px;
-      width: 100%;
-    }
-    .form-group {
-      margin-bottom: 15px;
-      width: 100%;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-      font-size: 14px; 
-      color: #555;
-    }
-    .form-group.small-label label {
-      font-size: 13px; 
-    }
-    select, input[type="text"], input[type="date"] {  
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px; 
-    }
-    
-    .date-input-wrapper {
-      position: relative;
-      width: 100%;
-    }
-    .date-input-wrapper::before {
-      content: "Masukan Tanggal Lahir";
-      position: absolute;
-      left: 9px;
-      top: 8px;
-      color: #000;
-      pointer-events: none;
-      font-size: 14px;
-    }
-    input[type="date"] {
-      appearance: none;
-      position: relative;
-      z-index: 1;
-      background-color: transparent;
-      color: transparent; 
-    }
-    input[type="date"]:valid,
-    input[type="date"]:focus {
-      color: #000; 
-    }
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      position: absolute;
-      right: 8px;
-      z-index: 2;
-      opacity: 1;
-    }
-    select {
-      appearance: none;
-      background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
-      background-repeat: no-repeat;
-      background-position-x: 95%;
-      background-position-y: center;
-      background-size: 16px; 
-    }
-    .button-group {
-      display: flex;
-      justify-content: flex-start; 
-      gap: 10px;
-      margin-top: 20px;
-      width: 100%;
-    }
-    .button-group button {
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px; 
-    }
-    .cancel-btn {
-      background-color: #f0f0f0;
-      border: 1px solid #ddd;
-    }
-    .add-btn {
-      background-color: #a4e4b3;
-      border: none;
-    }
-    
-    input[type="text"]::placeholder {
-      color: #000;
-    }
-  </style>
+  <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" type="image/x-icon">
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
+
 <body>
 
-<div class="container">
+  <div class="container">
     <!-- Sidebar -->
     <div class="sidebar">
-      <div style="text-align:center; margin-bottom:20px;">
-        <div style="font-size:40px;">👤</div>
-        <strong>Admin</strong>
+      <!-- Profil & Logout -->
+      <div class="sidebar-header">
+        <!-- Profil -->
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="{{ asset('img/image/akun.png') }}" alt="Foto Admin"
+            style="width: 40px; height: 40px; border-radius: 40%;">
+          <strong>Admin</strong>
+        </div>
+
+        <!-- Tombol Logout -->
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" style="background: none; border: none; cursor: pointer;">
+            <img src="{{ asset('img/image/logout.png') }}" alt="Logout" style="width: 18px; height: 18px;">
+          </button>
+        </form>
       </div>
-      <a href="{{ route('admin.dashboard') }}" >Dashboard</a>
+
+      <!-- Menu -->
+      <a href="{{ route('dashboard') }}">Dashboard</a>
       <a href="{{ route('admin.jadwalmengajar.index') }}">Jadwal Mengajar</a>
       <a href="{{ route('admin.dataguru.index') }}">Data Guru</a>
       <a href="{{ route('admin.datasantri.index') }}" class="active">Data Santri</a>
@@ -171,94 +49,167 @@
     <div class="main">
       <div class="topbar">
         <h1>Tambah Data Santri</h1>
-        <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100"/>
+        <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" />
       </div>
 
-      <!-- Form Tambah Data Guru -->
       <div class="form-container">
-        <div class="form-group">
-          <input type="text" name="namaguru" id="namaguru" placeholder="Masukan Nama Guru" required>
-        </div>
-        
-        <div class="form-group">
-          <input type="text" name="tempatlahir" id="tempatlahir" placeholder="Masukan Tempat Lahir" required>
-        </div>
-        
-        <div class="form-group">
-          <div class="date-input-wrapper">
-            <input type="date" name="tanggal_lahir" id="tanggal_lahir" required onfocus="this.showPicker()">
+        <form action="{{ route('admin.datasantri.store') }}" method="POST">
+          @csrf
+
+          <div class="form-group">
+            <input type="text" name="nama_santri" id="nama_santri" placeholder="Masukan Nama Santri" required>
           </div>
-        </div>
 
-        <div class="form-group">
-          <input type="text" name="asal" id="asal" placeholder="Masukan Asal" required>
-        </div>
+          <div class="form-group">
+            <input type="text" name="tempat_lahir" id="tempat_lahir" placeholder="Masukan Tempat Lahir" required>
+          </div>
 
-        <div class="form-group small-label">
-          <select name="Kelas" id="Kelas" required>
-            <option value="" disabled selected>Masukan Kelas</option>
-            <option value="kelasA">Kelas A</option>
-            <option value="kelasB">Kelas B</option>
-          </select>
-        </div>
+          <div class="form-group date-wrapper">
+            <label for="tanggal_lahir" class="date-placeholder">Masukan Tanggal Lahir</label>
+            <input type="date" name="tanggal_lahir" id="tanggal_lahir" required>
+          </div>
 
-        <div class="form-group small-label">
-          <select name="jeniskelas" id="jeniskelas" required>
-            <option value="" disabled selected>Jenis Kelas</option>
-            <option value="1tahun">1 Tahun</option>
-            <option value="2tahun">2 Tahun</option>
-          </select>
-        </div>
-        
-        <div class="form-group small-label">
-          <select name="cabang" id="cabang" required>
-            <option value="" disabled selected>Masukan Cabang</option>
-            <option value="sukajadi">Sukajadi</option>
-            <option value="rumbai">Rumbai</option>
-            <option value="gobah">Gobah</option>
-            <option value="kubang">Kubang</option>
-          </select>
-        </div>
-        
-        <div class="button-group">
-        <a href="{{ route('admin.datasantri.index') }}">
-          <button class="cancel-btn">Cancel</button>
-        </a>
-        <a href="{{ route('admin.datasantri.index') }}">
-          <button class="add-btn">Add</button>
-        </a>
-      </div>
+          <div class="form-group">
+            <input type="text" name="asal" id="asal" placeholder="Masukan Asal" required>
+          </div>
+
+          <div class="form-group">
+            <input type="text" name="nis" id="nis" placeholder="Masukan NIS" required>
+          </div>
+
+          <div class="form-group">
+            <input type="text" name="email" id="email" placeholder="Masukan Email" required>
+          </div>
+
+          <div class="form-group">
+            <input type="text" name="asal_sekolah" id="asal_sekolah" placeholder="Masukan Asal Sekolah" required>
+          </div>
+
+          <div class="form-group">
+            <input type="text" name="nama_ortu" id="nama_ortu" placeholder="Masukan Nama Orang Tua" required>
+          </div>
+
+          <div class="form-group">
+            <input type="text" name="NoHP_ortu" id="NoHP_ortu" placeholder="Masukan No HP Orang Tua" required>
+          </div>
+
+          <div class="form-group">
+            <input type="text" name="pekerjaan_ortu" id="pekerjaan_ortu" placeholder="Masukan Pekerjaan Orang Tua"
+              required>
+          </div>
+
+          <div class="form-group small-label">
+            <select name="MK" id="MK" required>
+              <option value="" disabled selected>Masukan MK</option>
+              <option value="Si">Si</option>
+              <option value="Se">Se</option>
+              <option value="Ti">Ti</option>
+              <option value="Te">Te</option>
+              <option value="In">In</option>
+              <option value="Fi">Fi</option>
+              <option value="Fe">Fe</option>
+              <option value="Ii">Ii</option>
+              <option value="Ie">Ie</option>
+            </select>
+          </div>
+
+          <div class="form-group small-label">
+            <select name="GolDar" id="GolDar" required>
+              <option value="" disabled selected>Masukan Golongan Darah</option>
+              <option value="A">A</option>
+              <option value="AB">AB</option>
+              <option value="B">B</option>
+              <option value="O">O</option>
+            </select>
+          </div>
+
+          <div class="form-group small-label">
+            <select name="jenis_kelamin" id="jenis_kelamin" required>
+              <option value="" disabled selected>Masukan Jenis Kelamin</option>
+              <option value="P">Perempuan</option>
+              <option value="L">Laki-Laki</option>
+            </select>
+          </div>
+
+          <div class="form-group small-label">
+            <select name="kat_masuk" id="kat_masuk" required>
+              <option value="" disabled selected>Masukan Kategori Masuk</option>
+              <option value="Umum">Umum</option>
+              <option value="Beasiswa">Beasiswa</option>
+            </select>
+          </div>
+
+          <div class="form-group small-label">
+            <select name="kelas" id="kelas" required>
+              <option value="" disabled selected>Masukan Kelas</option>
+              <option value="Halaqah A">Halaqah A</option>
+              <option value="Halaqah B">Halaqah B</option>
+              <option value="Halaqah C">Halaqah C</option>
+              <option value="Halaqah D">Halaqah D</option>
+              <option value="Halaqah E">Halaqah E</option>
+            </select>
+          </div>
+
+          <div class="form-group small-label">
+            <select name="periode_id" id="periode" required>
+              <option value="" disabled selected>Pilih Periode</option>
+              @foreach($periodes as $p)
+          <option value="{{ $p->id }}">{{ $p->tahun_ajaran }}</option>
+        @endforeach
+            </select>
+          </div>
+
+          <div class="form-group small-label">
+            <select name="jenis_kelas" id="jenis_kelas" required>
+              <option value="" disabled selected>Jenis Kelas</option>
+              <option value="1 Tahun">1 Tahun</option>
+              <option value="2 Tahun">2 Tahun</option>
+            </select>
+          </div>
+
+          <div class="form-group small-label">
+            <select name="cabang" id="cabang" required>
+              <option value="" disabled selected>Masukan Cabang</option>
+              <option value="Sukajadi">Sukajadi</option>
+              <option value="Rumbai">Rumbai</option>
+              <option value="Gobah 1">Gobah 1</option>
+              <option value="Gobah 2">Gobah 2</option>
+              <option value="Rawa Bening">Rawa Bening</option>
+            </select>
+          </div>
+
+          <div class="button-group">
+            <a href="{{ route('admin.datasantri.index') }}">
+              <button type="button" class="cancel-btn">Cancel</button>
+            </a>
+            <button type="submit" class="add-btn">Add</button>
+          </div>
+        </form>
       </div>
     </div>
-</div>
+  </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const dateInput = document.getElementById('tanggal_lahir');
-    
-    dateInput.addEventListener('change', function() {
-      if(this.value) {
-        this.style.color = '#000';
-      } else {
-        this.style.color = 'transparent';
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const input = document.getElementById('tanggal_lahir');
+      const label = document.querySelector('.date-placeholder');
+
+      function toggleLabel() {
+        if (input.value) {
+          label.style.opacity = '0';
+          label.style.visibility = 'hidden';
+        } else {
+          label.style.opacity = '1';
+          label.style.visibility = 'visible';
+        }
       }
+
+      input.addEventListener('input', toggleLabel);
+      toggleLabel();
     });
-    
-    dateInput.addEventListener('focus', function() {
-      this.style.color = '#000';
-    });
-    
-    dateInput.addEventListener('blur', function() {
-      if(!this.value) {
-        this.style.color = 'transparent';
-      }
-    });
-    
-    if(!dateInput.value) {
-      dateInput.style.color = 'transparent';
-    }
-  });
-</script>
+
+  </script>
 
 </body>
+
 </html>

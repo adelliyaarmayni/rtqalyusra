@@ -1,174 +1,220 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RTQ Al-Yusra | Grafik Kehadiran</title>
-  <link rel="shortcut icon" href="./img/image/logortq.png" type="image/x-icon">
+  <link rel="shortcut icon" href="{{ asset('img/image/logortq.png') }}" type="image/x-icon">
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      background-color: #f0f0f0;
-    }
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
-    .sidebar {
-      width: 220px;
-      background-color: #ffffff;
-      padding: 20px;
-      border-right: 1px solid #ddd;
-    }
-    .sidebar a {
-      display: block;
-      padding: 10px;
-      margin-bottom: 10px;
-      text-decoration: none;
-      color: black;
-      border-radius: 8px;
-    }
-    .sidebar a.active,
-    .sidebar a:hover {
-      background-color: #a4e4b3;
-    }
-    .main {
-      flex: 1;
-      padding: 20px;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .chart-container {
-      background-color: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 20px;
-    }
-    .header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .info-box {
-      padding: 8px 18px;
-      border-radius: 6px;
-      background-color: #a4e4b3;
-      font-weight: bold;
-      font-size: 14px;
-      display: inline-block;
-    }
-    .dropdown {
-      position: relative;
-      display: inline-block;
-    }
-    .dropdown-btn {
-      background-color: #a4e4b3;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .dropdown-content {
+    .hamburger {
       display: none;
-      position: absolute;
-      background-color: white;
-      min-width: 160px;
-      box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
-      border-radius: 8px;
-      z-index: 1;
-      margin-top: 5px;
     }
-    .dropdown-content div {
-      padding: 10px;
-      cursor: pointer;
-    }
-    .dropdown-content div:hover {
-      background-color: #f0f0f0;
-    }
-    .chart-placeholder {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-    .chart-box {
-      width: 100%;
+
+    @media (max-width: 768px) {
+      .gy-sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 240px;
+        height: 100vh;
+        background-color: white;
+        z-index: 50;
+        padding: 1rem;
+        transition: left 0.3s ease;
+      }
+
+      .gy-sidebar.active {
+        left: 0;
+      }
+
+      .hamburger {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem;
+        background-color: white;
+        border-radius: 0.25rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        z-index: 50;
+      }
+
+      .main {
+        margin-left: 0 !important;
+      }
     }
   </style>
 </head>
+
 <body>
-  <div class="container">
+  <div class="container flex">
     <!-- Sidebar -->
-    <div class="sidebar">
-      <div style="text-align:center; margin-bottom:20px;">
-        <div style="font-size:40px;">👤</div>
-        <strong>Yayasan</strong>
+    <div class="gy-sidebar" id="sidebar">
+      <div class="sidebar-header flex justify-between items-center mb-4">
+        <div class="flex items-center gap-2">
+          <img src="{{ asset('img/image/akun.png') }}" alt="Foto Admin"
+            style="width: 40px; height: 40px; border-radius: 100%;">
+          <strong>Guru</strong>
+        </div>
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" style="background: none; border: none; cursor: pointer;">
+            <img src="{{ asset('img/image/logout.png') }}" alt="Logout" style="width: 18px; height: 18px;">
+          </button>
+        </form>
       </div>
-      <a href="#">Dashboard</a>
-      <a href="#" class="active">Kehadiran</a>
-      <a href="#">Hafalan Santri</a>
-      <a href="#">Kinerja Guru</a>
+      <a href="{{ route('dashboard') }}">Dashboard</a>
+      <a href="{{ route('yayasan.kehadiranY.index') }}" class="active">Kehadiran</a>
+      <a href="{{ route('yayasan.hafalansantriY.index') }}">Hafalan Santri</a>
+      <a href="{{ route('yayasan.kategorinilai.index') }}">Kinerja Guru</a>
     </div>
 
     <!-- Main Content -->
-    <div class="main">
-      <div class="topbar">
-        <h1>Grafik Detail Kehadiran</h1>
-        <img src="./img/image/logortq.png" alt="Logo RTQ" height="100"/>
-      </div>
-
-      <div class="chart-container">
-        <!-- Baris label dan dropdown -->
-        <div class="header-row">
-          <div class="info-box">Sukajadi</div>
-          <div class="dropdown">
-            <button class="dropdown-btn" onclick="toggleDropdown()">Periode <span id="selected-year">2024-2025</span>
-              <span class="menu-arrow">
-                <img src="./img/image/arrowdown.png" alt="arrow" height="15"/>
-              </span>
-            </button>
-            <div class="dropdown-content" id="dropdown-menu">
-              <div onclick="selectYear('2023-2024')">2023-2024</div>
-              <div onclick="selectYear('2024-2025')">2024-2025</div>
-              <div onclick="selectYear('2025-2026')">2025-2026</div>
-            </div>
-          </div>
+    <div class="main flex-1">
+      <div class="gy-topbar bg-white flex justify-between items-center p-4 shadow flex-nowrap gap-4">
+        <div class="flex items-center gap-4 flex-shrink-0">
+          <button class="hamburger" id="toggleSidebarBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <h1 class="text-xl font-bold whitespace-nowrap">Grafik Kehadiran</h1>
         </div>
 
-        <!-- Grafik -->
-        <div class="chart-placeholder">
-          <div class="chart-box">
-            <h4>Data Kehadiran</h4>
-            <div style="height:150px; background-color:#e0e0e0;"></div>
+        <div class="flex-shrink-0">
+          <img src="{{ asset('img/image/logortq.png') }}" alt="Logo" class="h-14 p-1 rounded bg-white" />
+        </div>
+      </div>
+
+      <div class="chart-container p-4">
+        <!-- Header Row: Cabang dan Dropdown -->
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+          <!-- Nama Cabang -->
+          <div class="y-cabang-btn px-4 py-2 bg-[#A4E4B3] rounded text-black font-semibold w-fit">
+            {{ $cabang }}
+          </div>
+
+          <!-- Dropdown Periode -->
+          <form id="periodeForm" method="GET" action="{{ route('yayasan.kehadiranY.detail', ['cabang' => $cabang]) }}"
+            class="relative">
+            <input type="hidden" name="periode" id="periodeInput" value="{{ $periodeFilter ?? '' }}">
+
+            <button type="button" onclick="toggleDropdown()"
+              class="flex items-center justify-between gap-2 px-4 py-2 bg-[#A4E4B3] border border-gray-300 rounded shadow text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
+              Periode: <span id="selected-year">{{ $periodeFilter ?? 'Pilih Periode' }}</span>
+              <img src="{{ asset('img/image/arrowdown.png') }}" alt="arrow" class="w-4 h-4">
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div id="dropdown-menu"
+              class="absolute left-0 mt-1 w-full bg-white border border-gray-300 rounded shadow hidden z-50">
+              @foreach ($periodes as $p)
+          <div onclick="selectYear('{{ $p->tahun_ajaran }}')"
+          class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+          {{ $p->tahun_ajaran }}
+          </div>
+        @endforeach
+            </div>
+          </form>
+        </div>
+
+        <!-- Chart Kehadiran -->
+        <div class="chart-box bg-white p-4 rounded shadow w-full max-w-md mx-auto">
+          <h4 class="font-semibold text-center mb-2">Data Kehadiran</h4>
+          <div class="w-full h-[300px]">
+            <canvas id="chartKehadiranSantri"></canvas>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- JS Dropdown Logic -->
-  <script>
-    function toggleDropdown() {
-      const menu = document.getElementById('dropdown-menu');
-      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    }
+    <!-- JS Dropdown Logic -->
+    <script>
+      const sidebar = document.getElementById('sidebar');
+      const toggleBtn = document.getElementById('toggleSidebarBtn');
 
-    function selectYear(year) {
-      document.getElementById('selected-year').textContent = year;
-      document.getElementById('dropdown-menu').style.display = 'none';
-    }
+      toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+        toggleBtn.classList.toggle('hidden');
+      });
 
-    window.onclick = function(e) {
-      if (!e.target.closest('.dropdown')) {
-        document.getElementById('dropdown-menu').style.display = 'none';
+      document.addEventListener('click', function (e) {
+        if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+          sidebar.classList.remove('active');
+          toggleBtn.classList.remove('hidden');
+        }
+      });
+      function toggleDropdown() {
+        const menu = document.getElementById('dropdown-menu');
+        menu.classList.toggle('hidden');
       }
-    }
-  </script>
+
+      function selectYear(year) {
+        document.getElementById('selected-year').textContent = year;
+        document.getElementById('periodeInput').value = year;
+        document.getElementById('periodeForm').submit();
+      }
+
+      // Tutup dropdown saat klik di luar
+      window.addEventListener('click', function (e) {
+        if (!e.target.closest('#periodeForm')) {
+          document.getElementById("dropdown-menu").classList.add("hidden");
+        }
+      });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+      const chartData = @json($chartData);
+
+      const labels = chartData.map(item => item.kelas);
+      const hadirData = chartData.map(item => item.hadir);
+      const alfaData = chartData.map(item => item.alfa);
+
+      new Chart(document.getElementById('chartKehadiranSantri'), {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Hadir',
+              data: hadirData,
+              backgroundColor: '#4CAF50'
+            },
+            {
+              label: 'Alfa',
+              data: alfaData,
+              backgroundColor: '#F44336'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Jumlah Kehadiran'
+              },
+              ticks: {
+                stepSize: 1
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'top'
+            }
+          }
+        }
+      });
+    </script>
 </body>
+
 </html>
