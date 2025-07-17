@@ -24,7 +24,6 @@
           </button>
         </form>
       </div>
-
       <!-- Menu -->
       <a href="{{ route('dashboard') }}" class="active">Dashboard</a>
       <a href="{{ route('admin.jadwalmengajar.index') }}">Jadwal Mengajar</a>
@@ -44,25 +43,35 @@
         <h1>Dashboard</h1>
         <img src="{{ asset('img/image/logortq.png') }}" alt="Logo RTQ" height="100" />
       </div>
-
+      
       <div class="chart-container">
         <!-- Dropdown Periode -->
-        <form method="GET" id="periodeForm" action="{{ route('dashboard') }}">
-          <div class="dropdown">
-            <button type="button" class="dropdown-btn" onclick="toggleDropdown()">Periode: 
-              <span id="selected-year">{{ $periodeFilter ?? 'Pilih Periode' }}</span>
-              <span class="menu-arrow">
-                <img src="{{ asset('img/image/arrowdown.png') }}" alt="arrowdown" height="15" />
-              </span>
-            </button>
-            <div class="dropdown-content" id="dropdown-menu">
-              @foreach($periodes as $p)
-                <div onclick="selectYear('{{ $p->tahun_ajaran }}')">{{ $p->tahun_ajaran }}</div>
-              @endforeach
-            </div>
+        <div class="dropdown">
+          <button type="button" class="dropdown-btn" onclick="toggleDropdown()">Periode: 
+            <span id="selected-year">{{ $selectedPeriodeNama }}</span>
+            <span class="menu-arrow">
+              <img src="{{ asset('img/image/arrowdown.png') }}" alt="arrowdown" height="15" />
+            </span>
+          </button>
+          <div class="dropdown-content" id="dropdown-menu">
+            @foreach($periodes as $p)
+              <div onclick="selectYear('{{ $p->id }}', '{{ $p->tahun_ajaran }}')">
+                {{ $p->tahun_ajaran }}
+                @if($selectedPeriode == $p->id)
+                  <span style="color: #2563eb; font-weight: 600;">(Aktif)</span>
+                @endif
+              </div>
+            @endforeach
           </div>
-          <input type="hidden" name="periode" id="periodeInput" value="{{ $periodeFilter }}">
-        </form>
+        </div>
+
+        <!-- Loading indicator -->
+        <div id="loading" style="display: none; margin-bottom: 1rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div style="width: 1rem; height: 1rem; border: 2px solid #16a34a; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <span style="font-size: 0.875rem; color: #6b7280;">Memperbarui data...</span>
+          </div>
+        </div>
 
         <!-- Cards -->
         <div class="cards">
@@ -98,10 +107,40 @@
       menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
     }
 
-    function selectYear(year) {
-      document.getElementById('selected-year').textContent = year;
-      document.getElementById('periodeInput').value = year;
-      document.getElementById('periodeForm').submit();
+    function selectYear(id, tahun) {
+      // Tampilkan loading
+      document.getElementById('loading').style.display = 'block';
+      
+      // Update tampilan dropdown
+      document.getElementById('selected-year').textContent = tahun;
+      document.getElementById('dropdown-menu').style.display = 'none';
+      
+      // Kirim request AJAX untuk update session
+      fetch('{{ route("admin.dashboard.update-periode") }}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+          periode_id: id
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Reload halaman untuk update data dashboard
+          window.location.reload();
+        } else {
+          alert('Gagal mengupdate periode: ' + data.message);
+          document.getElementById('loading').style.display = 'none';
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat mengupdate periode');
+        document.getElementById('loading').style.display = 'none';
+      });
     }
 
     window.onclick = function (e) {
@@ -109,6 +148,16 @@
         document.getElementById("dropdown-menu").style.display = "none";
       }
     };
+
+    // CSS untuk animasi loading
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
   </script>
 
   <!-- Script Chart -->
@@ -159,8 +208,9 @@
     });
 
     // Hafalan chart
-    const labelsHafalan = hafalanByJuz.map(item => `Juz ${item.juz}`);
-    const dataHafalan = hafalanByJuz.map(item => item.total);
+    const filteredHafalan = hafalanByJuz.filter(item => item.juz !== null && item.juz !== 0 && item.juz !== '');
+    const labelsHafalan = filteredHafalan.map(item => `Juz ${item.juz}`);
+    const dataHafalan = filteredHafalan.map(item => item.total);
 
     new Chart(document.getElementById('hafalanChart'), {
       type: 'bar',

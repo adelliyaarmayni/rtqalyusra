@@ -16,31 +16,34 @@ class DashboardYayasanController extends Controller
 {
     public function index(Request $request)
     {
-        $periodeFilter = $request->input('periode');
-        $periode = $periodeFilter ? Periode::where('tahun_ajaran', $periodeFilter)->first() : null;
+        // Gunakan session periode aktif
+        $selectedPeriode = session('periode_aktif_guru');
+        $periode = $selectedPeriode ? Periode::find($selectedPeriode) : null;
+        
+        // Ambil semua periode untuk dropdown
+        $periodes = Periode::orderByDesc('tahun_awal')->get();
+        
+        // Dapatkan nama tahun ajaran dari periode terpilih
+        $selectedPeriodeNama = $periode?->tahun_ajaran ?? 'Pilih Periode';
 
         // Jumlah guru berdasarkan periode
         $guruCount = 0;
         $santriCount = 0;
-
+        
         if ($periode) {
             // Guru yang terlibat di jadwal mengajar dalam periode ini
             $guruIds = JadwalMengajar::where('periode_id', $periode->id)
                 ->pluck('guru_id')
                 ->unique();
-
             $guruCount = \App\Models\Guru::whereIn('id', $guruIds)->count();
-
-            $santriCount = $periode
-                ? \App\Models\Santri::where('periode_id', $periode->id)->count()
-                : 0;
+            
+            $santriCount = \App\Models\Santri::where('periode_id', $periode->id)->count();
         }
 
         // Bar Chart Kehadiran berdasarkan cabang (2 bar: hadir & alfa)
         $kehadiranData = [];
         if ($periode) {
             $jadwalIds = JadwalMengajar::where('periode_id', $periode->id)->pluck('id');
-
             $rawKehadiran = DetailKehadiran::whereIn('jadwal_mengajar_id', $jadwalIds)
                 ->with('jadwal')
                 ->get()
@@ -52,13 +55,11 @@ class DashboardYayasanController extends Controller
                         'alfa' => $items->where('status_kehadiran', 'Alfa')->count(),
                     ];
                 })->values();
-
             $kehadiranData = $rawKehadiran;
         }
 
         // Bar Chart Hafalan berdasarkan juz
         $hafalanByJuz = collect();
-
         if ($periode) {
             $subquery = DetailHafalan::select('santri_id', DB::raw('MAX(juz) as max_juz'))
                 ->whereHas('jadwal', function ($q) use ($periode) {
@@ -67,20 +68,16 @@ class DashboardYayasanController extends Controller
                 ->groupBy('santri_id');
 
             $hafalanByJuz = DB::table(DB::raw("({$subquery->toSql()}) as sub"))
-                ->mergeBindings($subquery->getQuery()) 
+                ->mergeBindings($subquery->getQuery())
                 ->select('max_juz as juz', DB::raw('COUNT(*) as total'))
                 ->groupBy('max_juz')
                 ->orderBy('max_juz')
                 ->get();
         }
 
-        $periodes = Periode::orderByDesc('tahun_awal')->get();
-
         $chartTerlambatGuru = collect();
-
         if ($periode) {
             $jadwalIds = JadwalMengajar::where('periode_id', $periode->id)->pluck('id');
-
             $terlambatData = Dokumentasi::whereIn('jadwal_mengajar_id', $jadwalIds)
                 ->where('status_terlambat', 'Terlambat')
                 ->with('jadwal.guru')
@@ -102,8 +99,27 @@ class DashboardYayasanController extends Controller
             'kehadiranData',
             'hafalanByJuz',
             'periodes',
-            'periodeFilter',
+            'selectedPeriode',
+            'selectedPeriodeNama',
             'chartTerlambatGuru'
         ));
+    }
+
+    // Method khusus untuk update periode via AJAX
+    public function updatePeriode(Request $request)
+    {
+        if ($request->has('periode_id')) {
+            session(['periode_aktif_guru' => $request->periode_id]);
+            
+            $selectedPeriodeNama = Periode::find($request->periode_id)?->tahun_ajaran ?? 'Pilih Periode';
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Periode berhasil diupdate',
+                'periode_nama' => $selectedPeriodeNama
+            ]);
+        }
+        
+        return response()->json(['success' => false, 'message' => 'Periode ID tidak ditemukan']);
     }
 }

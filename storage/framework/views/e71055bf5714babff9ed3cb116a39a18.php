@@ -93,7 +93,7 @@
       </div>
 
       <div class="chart-container p-4">
-        <!-- Dropdown -->
+        <!-- Dropdown Periode -->
         <div class="mb-4">
           <form method="GET" action="<?php echo e(route('guru.kehadiranG.index')); ?>">
             <label for="periode_id" class="mr-2 font-medium">Pilih Periode:</label>
@@ -101,11 +101,11 @@
               class="border border-gray-300 rounded px-2 py-1 text-sm w-44">
               <option value="">-- Semua Periode --</option>
               <?php $__currentLoopData = $periodes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $periode): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-          <option value="<?php echo e($periode->id); ?>" <?php echo e($selectedPeriode == $periode->id ? 'selected' : ''); ?>>
-          <?php echo e($periode->tahun_ajaran); ?>
+                <option value="<?php echo e($periode->id); ?>" <?php echo e($selectedPeriode == $periode->id ? 'selected' : ''); ?>>
+                  <?php echo e($periode->tahun_ajaran); ?>
 
-          </option>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </option>
+              <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </select>
           </form>
         </div>
@@ -116,23 +116,23 @@
         <!-- Kartu Kelas -->
         <div class="flex flex-wrap gap-4">
           <?php $__empty_1 = true; $__currentLoopData = $kelasUnik; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-        <div
-        class="bg-[#A4E4B3] p-4 rounded-2xl shadow-md w-full sm:w-[200px] flex flex-col items-center text-center">
-        <div class="text-lg font-bold mb-2"> <?php echo e($item); ?></div>
-        <div class="flex gap-2">
-          <a href="<?php echo e(route('guru.kehadiranG.input', ['namaKelas' => strtolower($item), 'periode_id' => $selectedPeriode])); ?>"
-          title="Input Kehadiran" class="bg-[#C4EAC4] p-2 rounded-md shadow hover:bg-green-200">
-          <img src="<?php echo e(asset('img/image/plus.png')); ?>" alt="Input" class="w-5 h-5" />
-          </a>
-          <a href="<?php echo e(route('guru.detailKehadiran.detail', ['kelas' => strtolower($item), 'periode_id' => $selectedPeriode])); ?>"
-          title="Lihat Detail" class="bg-[#C4EAC4] p-2 rounded-md shadow hover:bg-green-200">
-          <img src="<?php echo e(asset('img/image/detail.png')); ?>" alt="Detail" class="w-5 h-5" />
-          </a>
-        </div>
-        </div>
-      <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-        <p class="text-gray-500">Tidak ada jadwal mengajar untuk Anda.</p>
-      <?php endif; ?>
+            <div
+              class="bg-[#A4E4B3] p-4 rounded-2xl shadow-md w-full sm:w-[200px] flex flex-col items-center text-center">
+              <div class="text-lg font-bold mb-2"><?php echo e($item); ?></div>
+              <div class="flex gap-2">
+                <a href="<?php echo e(route('guru.kehadiranG.input', ['namaKelas' => strtolower($item)])); ?>"
+                  title="Input Kehadiran" class="bg-[#C4EAC4] p-2 rounded-md shadow hover:bg-green-200">
+                  <img src="<?php echo e(asset('img/image/plus.png')); ?>" alt="Input" class="w-5 h-5" />
+                </a>
+                <a href="<?php echo e(route('guru.detailKehadiran.detail', ['kelas' => strtolower($item)])); ?>"
+                  title="Lihat Detail" class="bg-[#C4EAC4] p-2 rounded-md shadow hover:bg-green-200">
+                  <img src="<?php echo e(asset('img/image/detail.png')); ?>" alt="Detail" class="w-5 h-5" />
+                </a>
+              </div>
+            </div>
+          <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+            <p class="text-gray-500">Tidak ada jadwal mengajar untuk Anda.</p>
+          <?php endif; ?>
         </div>
       </div>
     </div>
@@ -144,34 +144,17 @@
 
     toggleBtn.addEventListener('click', () => {
       sidebar.classList.toggle('active');
-      toggleBtn.classList.toggle('hidden'); // hide the button when sidebar is active
+      toggleBtn.classList.toggle('hidden');
     });
 
-    // Sembunyikan sidebar dan tampilkan tombol jika klik di luar sidebar
     document.addEventListener('click', function (e) {
       if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
         sidebar.classList.remove('active');
         toggleBtn.classList.remove('hidden');
       }
     });
-
-    function toggleDropdown() {
-      document.getElementById('dropdown-menu').classList.toggle('hidden');
-    }
-
-    function selectYear(id, tahun) {
-      document.getElementById('selected-year').textContent = tahun;
-      document.getElementById('periodeInput').value = id;
-      document.getElementById('periodeForm').submit();
-    }
-
-    // Tutup dropdown jika klik di luar
-    window.onclick = function (e) {
-      if (!e.target.closest('.dropdown-btn')) {
-        document.getElementById("dropdown-menu").classList.add("hidden");
-      }
-    }
   </script>
 </body>
+
 
 </html><?php /**PATH D:\Adel\Semester 8\TA Adel\Sistem\sistemrtq\resources\views/guru/kehadiranG/index.blade.php ENDPATH**/ ?>

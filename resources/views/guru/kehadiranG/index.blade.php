@@ -93,7 +93,7 @@
       </div>
 
       <div class="chart-container p-4">
-        <!-- Dropdown -->
+        <!-- Dropdown Periode -->
         <div class="mb-4">
           <form method="GET" action="{{ route('guru.kehadiranG.index') }}">
             <label for="periode_id" class="mr-2 font-medium">Pilih Periode:</label>
@@ -101,10 +101,10 @@
               class="border border-gray-300 rounded px-2 py-1 text-sm w-44">
               <option value="">-- Semua Periode --</option>
               @foreach($periodes as $periode)
-          <option value="{{ $periode->id }}" {{ $selectedPeriode == $periode->id ? 'selected' : '' }}>
-          {{ $periode->tahun_ajaran }}
-          </option>
-        @endforeach
+                <option value="{{ $periode->id }}" {{ $selectedPeriode == $periode->id ? 'selected' : '' }}>
+                  {{ $periode->tahun_ajaran }}
+                </option>
+              @endforeach
             </select>
           </form>
         </div>
@@ -115,23 +115,23 @@
         <!-- Kartu Kelas -->
         <div class="flex flex-wrap gap-4">
           @forelse ($kelasUnik as $item)
-        <div
-        class="bg-[#A4E4B3] p-4 rounded-2xl shadow-md w-full sm:w-[200px] flex flex-col items-center text-center">
-        <div class="text-lg font-bold mb-2"> {{ $item }}</div>
-        <div class="flex gap-2">
-          <a href="{{ route('guru.kehadiranG.input', ['namaKelas' => strtolower($item), 'periode_id' => $selectedPeriode]) }}"
-          title="Input Kehadiran" class="bg-[#C4EAC4] p-2 rounded-md shadow hover:bg-green-200">
-          <img src="{{ asset('img/image/plus.png') }}" alt="Input" class="w-5 h-5" />
-          </a>
-          <a href="{{ route('guru.detailKehadiran.detail', ['kelas' => strtolower($item), 'periode_id' => $selectedPeriode]) }}"
-          title="Lihat Detail" class="bg-[#C4EAC4] p-2 rounded-md shadow hover:bg-green-200">
-          <img src="{{ asset('img/image/detail.png') }}" alt="Detail" class="w-5 h-5" />
-          </a>
-        </div>
-        </div>
-      @empty
-        <p class="text-gray-500">Tidak ada jadwal mengajar untuk Anda.</p>
-      @endforelse
+            <div
+              class="bg-[#A4E4B3] p-4 rounded-2xl shadow-md w-full sm:w-[200px] flex flex-col items-center text-center">
+              <div class="text-lg font-bold mb-2">{{ $item }}</div>
+              <div class="flex gap-2">
+                <a href="{{ route('guru.kehadiranG.input', ['namaKelas' => strtolower($item)]) }}"
+                  title="Input Kehadiran" class="bg-[#C4EAC4] p-2 rounded-md shadow hover:bg-green-200">
+                  <img src="{{ asset('img/image/plus.png') }}" alt="Input" class="w-5 h-5" />
+                </a>
+                <a href="{{ route('guru.detailKehadiran.detail', ['kelas' => strtolower($item)]) }}"
+                  title="Lihat Detail" class="bg-[#C4EAC4] p-2 rounded-md shadow hover:bg-green-200">
+                  <img src="{{ asset('img/image/detail.png') }}" alt="Detail" class="w-5 h-5" />
+                </a>
+              </div>
+            </div>
+          @empty
+            <p class="text-gray-500">Tidak ada jadwal mengajar untuk Anda.</p>
+          @endforelse
         </div>
       </div>
     </div>
@@ -143,34 +143,17 @@
 
     toggleBtn.addEventListener('click', () => {
       sidebar.classList.toggle('active');
-      toggleBtn.classList.toggle('hidden'); // hide the button when sidebar is active
+      toggleBtn.classList.toggle('hidden');
     });
 
-    // Sembunyikan sidebar dan tampilkan tombol jika klik di luar sidebar
     document.addEventListener('click', function (e) {
       if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
         sidebar.classList.remove('active');
         toggleBtn.classList.remove('hidden');
       }
     });
-
-    function toggleDropdown() {
-      document.getElementById('dropdown-menu').classList.toggle('hidden');
-    }
-
-    function selectYear(id, tahun) {
-      document.getElementById('selected-year').textContent = tahun;
-      document.getElementById('periodeInput').value = id;
-      document.getElementById('periodeForm').submit();
-    }
-
-    // Tutup dropdown jika klik di luar
-    window.onclick = function (e) {
-      if (!e.target.closest('.dropdown-btn')) {
-        document.getElementById("dropdown-menu").classList.add("hidden");
-      }
-    }
   </script>
 </body>
+
 
 </html>

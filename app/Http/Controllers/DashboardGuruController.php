@@ -15,13 +15,13 @@ class DashboardGuruController extends Controller
         $guruId = Auth::user()->guru->id ?? null;
         if (!$guruId) {
             return abort(403, 'Guru tidak ditemukan.');
-        }
+        }   
 
         // Ambil semua periode untuk dropdown
         $periodes = Periode::orderBy('tahun_awal', 'asc')->get();
 
-        // Default ke periode terbaru jika tidak ada yang dipilih
-        $selectedPeriode = $request->input('periode_id') ?? $periodes->first()?->id;
+        // Gunakan session periode aktif
+        $selectedPeriode = session('periode_aktif_guru');
 
         // Dapatkan nama tahun ajaran dari periode terpilih
         $selectedPeriodeNama = Periode::find($selectedPeriode)?->tahun_ajaran ?? 'Pilih Periode';
@@ -48,5 +48,23 @@ class DashboardGuruController extends Controller
             'selectedPeriode' => $selectedPeriode,
             'selectedPeriodeNama' => $selectedPeriodeNama,
         ]);
+    }
+
+    public function updatePeriode(Request $request)
+    {
+        if ($request->has('periode_id')) {
+            session(['periode_aktif_guru' => $request->periode_id]);
+            
+            // Return response untuk AJAX
+            $selectedPeriodeNama = Periode::find($request->periode_id)?->tahun_ajaran ?? 'Pilih Periode';
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Periode berhasil diupdate',
+                'periode_nama' => $selectedPeriodeNama
+            ]);
+        }
+        
+        return response()->json(['success' => false, 'message' => 'Periode ID tidak ditemukan']);
     }
 }

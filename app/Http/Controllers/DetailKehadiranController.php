@@ -19,8 +19,8 @@ class DetailKehadiranController extends Controller
 {
     public function detail($kelas)
     {
-        $selectedPeriode = request()->query('periode_id');
-
+        // Gunakan session periode aktif
+        $selectedPeriode = session('periode_aktif_guru');
         $user = Auth::user();
         $guru = $user->guru;
 
@@ -68,15 +68,9 @@ class DetailKehadiranController extends Controller
             'kegiatan' => 'required|string',
             'jam_masuk' => 'required',
             'jam_keluar' => 'required',
-            'dokumentasi' => 'nullable|image|mimes:jpg,png,jpeg, jfif|max:2048',
+            'dokumentasi' => 'nullable|image|mimes:jpg,png,jpeg,jfif|max:2048',
             'jadwal_mengajar_id' => 'required|exists:jadwal_mengajar,id',
         ]);
-
-        // foreach ($request->kehadiran as $id => $data) {
-        //     if (!isset($data['bukti'])) {
-        //         return back()->withErrors(["kehadiran.$id.bukti" => "Bukti untuk santri {$data['nama_santri']} wajib diunggah."])->withInput();
-        //     }
-        // }
 
         if (!$request->hasFile('dokumentasi')) {
             return back()->withErrors(['dokumentasi' => 'Dokumentasi kegiatan wajib diunggah.'])->withInput();
@@ -85,10 +79,10 @@ class DetailKehadiranController extends Controller
         // Upload dokumentasi kegiatan
         if ($request->hasFile('dokumentasi')) {
             $dokumenPath = $request->file('dokumentasi')->store('dokumentasi_kegiatan', 'public');
-
+            
             // Hitung keterlambatan
-            $waktuSubmit = Carbon::now(); // waktu submit saat ini dengan timezone Asia/Jakarta
-            $batasAbsen = Carbon::createFromFormat('H:i:s', $request->jam_masuk,)->addMinutes(15); // batas absen (jam_masuk + 15 menit)
+            $waktuSubmit = Carbon::now();
+            $batasAbsen = Carbon::createFromFormat('H:i:s', $request->jam_masuk)->addMinutes(15);
             $statusTerlambat = $waktuSubmit->gt($batasAbsen) ? 'Terlambat' : 'Tepat Waktu';
 
             Dokumentasi::create([
@@ -119,7 +113,6 @@ class DetailKehadiranController extends Controller
 
         return redirect()->route('guru.detailKehadiran.detail', [
             'kelas' => $request->kelas,
-            'periode_id' => $request->periode_id,
             'tanggal' => $request->tanggal,
         ])->with('success', 'Kehadiran dan dokumentasi berhasil disimpan.');
     }
@@ -128,14 +121,15 @@ class DetailKehadiranController extends Controller
     {
         $user = Auth::user();
         $guru = $user->guru;
-
+        
         try {
             $parseDate = Carbon::parse($tanggal)->toDateString();
         } catch (\Exception $e) {
             return response()->json(['error' => 'Format tanggal tidak valid.'], 400);
         }
 
-        $periodeId = request()->query('periode_id');
+        // Gunakan session periode aktif
+        $periodeId = session('periode_aktif_guru');
         $kegiatan = request()->query('kegiatan');
 
         $query = JadwalMengajar::where('guru_id', $guru->id)
@@ -163,7 +157,6 @@ class DetailKehadiranController extends Controller
         return response()->json($kehadiran);
     }
 
-
     public function getDokumentasi($tanggal)
     {
         try {
@@ -172,7 +165,8 @@ class DetailKehadiranController extends Controller
             return response()->json(['error' => 'Format tanggal tidak valid.'], 400);
         }
 
-        $periodeId = request()->query('periode_id');
+        // Gunakan session periode aktif
+        $periodeId = session('periode_aktif_guru');
         $kegiatan = request()->query('kegiatan');
 
         Log::info('Filter Dokumentasi', [
@@ -195,8 +189,8 @@ class DetailKehadiranController extends Controller
         }
 
         $dokumentasi = $query->get();
-
         $dokumentasiUrl = [];
+        
         foreach ($dokumentasi as $record) {
             if (Storage::disk('public')->exists($record->dokumentasi)) {
                 $dokumentasiUrl[] = Storage::url($record->dokumentasi);

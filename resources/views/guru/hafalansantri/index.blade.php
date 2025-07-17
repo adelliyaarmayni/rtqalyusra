@@ -121,6 +121,7 @@
       </div>
 
       <div class="chart-container p-4">
+        <!-- Dropdown Periode -->
         <div class="mb-4">
           <form method="GET" action="{{ route('guru.hafalansantri.index') }}">
             <label for="periode_id" class="mr-2 font-medium">Pilih Periode:</label>
@@ -128,10 +129,10 @@
               class="border border-gray-300 rounded px-2 py-1 text-sm w-44">
               <option value="">-- Semua Periode --</option>
               @foreach ($listPeriode as $periode)
-          <option value="{{ $periode->id }}" {{ request('periode_id') == $periode->id ? 'selected' : '' }}>
-          {{ $periode->tahun_ajaran }}
-          </option>
-        @endforeach
+                <option value="{{ $periode->id }}" {{ $selectedPeriode == $periode->id ? 'selected' : '' }}>
+                  {{ $periode->tahun_ajaran }}
+                </option>
+              @endforeach
             </select>
           </form>
         </div>
@@ -140,23 +141,23 @@
 
         <div class="flex flex-wrap gap-4">
           @forelse ($kelasUnik as $item)
-        <div
-        class="bg-[#A4E4B3] p-4 rounded-2xl shadow-md w-full sm:w-[200px] flex flex-col items-center text-center">
-        <div class="text-lg font-bold mb-2">Halaqah {{ $item }}</div>
-        <div class="flex gap-2">
-          <a href="{{ route('guru.hafalansantri.input', strtolower($item)) }}?periode_id={{ request('periode_id') }}"
-          class="bg-[#C4EAC4] p-2 rounded-md shadow hover:bg-green-200" title="Input Hafalan">
-          <img src="{{ asset('img/image/plus.png') }}" alt="Input" class="w-5 h-5" />
-          </a>
-          <a href="{{ route('guru.hafalansantri.detail', strtolower($item)) }}?periode_id={{ request('periode_id') }}"
-          class="bg-[#C4EAC4] p-2 rounded-md shadow hover:bg-green-200" title="Lihat Detail">
-          <img src="{{ asset('img/image/detail.png') }}" alt="Detail" class="w-5 h-5" />
-          </a>
-        </div>
-        </div>
-      @empty
-        <p class="text-gray-500">Tidak ada jadwal mengajar untuk Anda.</p>
-      @endforelse
+            <div
+              class="bg-[#A4E4B3] p-4 rounded-2xl shadow-md w-full sm:w-[200px] flex flex-col items-center text-center">
+              <div class="text-lg font-bold mb-2">{{ $item }}</div>
+              <div class="flex gap-2">
+                <a href="{{ route('guru.hafalansantri.input', strtolower($item)) }}"
+                  class="bg-[#C4EAC4] p-2 rounded-md shadow hover:bg-green-200" title="Input Hafalan">
+                  <img src="{{ asset('img/image/plus.png') }}" alt="Input" class="w-5 h-5" />
+                </a>
+                <a href="{{ route('guru.hafalansantri.detail', strtolower($item)) }}"
+                  class="bg-[#C4EAC4] p-2 rounded-md shadow hover:bg-green-200" title="Lihat Detail">
+                  <img src="{{ asset('img/image/detail.png') }}" alt="Detail" class="w-5 h-5" />
+                </a>
+              </div>
+            </div>
+          @empty
+            <p class="text-gray-500">Tidak ada jadwal mengajar untuk Anda.</p>
+          @endforelse
         </div>
       </div>
     </div>
@@ -182,23 +183,8 @@
         toggleBtn.style.display = 'inline-flex';
       }
     });
-    function toggleDropdown() {
-      const menu = document.getElementById('dropdown-menu');
-      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function selectYear(year) {
-      document.getElementById('selected-year').textContent = year;
-      document.getElementById('dropdown-menu').style.display = 'none';
-    }
-
-    // Optional: Close dropdown if clicked outside
-    window.onclick = function (e) {
-      if (!e.target.matches('.dropdown-btn')) {
-        const dropdowns = document.getElementsByClassName("dropdown-content");
-        for (let i = 0; i < dropdowns.length; i++) { dropdowns[i].style.display = "none"; }
-      }
-    } </script>
+  </script>
 </body>
+
 
 </html>

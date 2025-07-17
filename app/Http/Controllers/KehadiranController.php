@@ -17,15 +17,15 @@ class KehadiranController extends Controller
     {
         $user = Auth::user();
         $guru = $user->guru;
-
-        $selectedPeriode = $request->query('periode_id'); // ambil dari query string
+        
+        // Gunakan session periode aktif
+        $selectedPeriode = session('periode_aktif_guru');
         $periodes = Periode::orderBy('tahun_awal', 'asc')->get();
 
         if ($guru) {
             $jadwal = JadwalMengajar::where('guru_id', $guru->id)
                 ->when($selectedPeriode, fn($q) => $q->where('periode_id', $selectedPeriode))
                 ->get();
-
             $kelasUnik = $jadwal->pluck('kelas')->unique();
         } else {
             $jadwal = collect();
@@ -45,10 +45,10 @@ class KehadiranController extends Controller
         $user = Auth::user();
         $guru = $user->guru;
         $namaKelas = ucfirst($namaKelas);
-
-        $selectedPeriode = $request->query('periode_id');
+        
+        // Gunakan session periode aktif
+        $selectedPeriode = session('periode_aktif_guru');
         $tanggal = $request->query('tanggal') ?? now()->toDateString();
-
         $periodes = Periode::orderBy('tahun_awal', 'desc')->get();
 
         // Ambil semua jadwal untuk guru ini

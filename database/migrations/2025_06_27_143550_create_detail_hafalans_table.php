@@ -12,13 +12,14 @@ return new class extends Migration {
             $table->unsignedBigInteger('santri_id');
             $table->unsignedBigInteger('jadwal_mengajar_id');
             $table->date('tanggal');
-            $table->string('juz');
-            $table->string('surah');
-            $table->string('ayat_awal');
-            $table->string('ayat_akhir');
+            $table->string('juz')->nullable();
+            $table->string('surah')->nullable();
+            $table->string('ayat_awal')->nullable();
+            $table->string('ayat_akhir')->nullable();
+            $table->boolean('is_draft')->default(false); 
             $table->timestamps();
 
-            $table->foreign('santri_id')->references('id')->on('santri');
+             $table->foreign('santri_id')->references('id')->on('santri');
             $table->foreign('jadwal_mengajar_id')->references('id')->on('jadwal_mengajar');
         });
     }

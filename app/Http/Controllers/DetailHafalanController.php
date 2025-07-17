@@ -18,15 +18,15 @@ class DetailHafalanController extends Controller
     {
         $user = Auth::user();
         $guru = $user->guru;
-
         $listPeriode = Periode::orderBy('tahun_awal', 'asc')->get();
-        $selectedPeriode = request('periode_id');
+        
+        // Gunakan session periode aktif
+        $selectedPeriode = session('periode_aktif_guru');
 
         if ($guru) {
             $jadwal = JadwalMengajar::where('guru_id', $guru->id)
                 ->when($selectedPeriode, fn($q) => $q->where('periode_id', $selectedPeriode))
                 ->get();
-
             $kelasUnik = $jadwal->pluck('kelas')->unique();
         } else {
             $jadwal = collect();
@@ -36,13 +36,14 @@ class DetailHafalanController extends Controller
         return view('guru.hafalansantri.index', compact('jadwal', 'kelasUnik', 'listPeriode', 'selectedPeriode'));
     }
 
-
     public function input($namaKelas)
     {
         $user = Auth::user();
         $guru = $user->guru;
-        $periodeId = request('periode_id');
-
+        
+        // Gunakan session periode aktif
+        $periodeId = session('periode_aktif_guru');
+        $tanggal = request('tanggal') ?? Carbon::now()->toDateString();
         $namaKelas = ucfirst($namaKelas);
 
         $surahList = json_decode(File::get(resource_path('data/surah.json')), true);
@@ -63,13 +64,22 @@ class DetailHafalanController extends Controller
             ->when($periodeId, fn($q) => $q->where('periode_id', $periodeId))
             ->get();
 
+        $jadwalId = $jadwal->first()?->id;
+        $draftHafalan = DetailHafalan::where('jadwal_mengajar_id', $jadwalId)
+            ->whereDate('tanggal', $tanggal)
+            ->where('is_draft', true)
+            ->get()
+            ->keyBy('santri_id');
+
         return view('guru.hafalansantri.input', [
             'namaKelas' => $namaKelas,
             'santri' => $santri,
             'guru' => $guru,
             'jadwal' => $jadwal,
             'listSurah' => $surahList,
-            'listJuz' => $juzList
+            'listJuz' => $juzList,
+            'draftHafalan' => $draftHafalan,
+            'tanggal' => $tanggal
         ]);
     }
 
@@ -77,7 +87,9 @@ class DetailHafalanController extends Controller
     {
         $surahList = json_decode(File::get(resource_path('data/surah.json')), true);
         $juzList = json_decode(File::get(resource_path('data/juz.json')), true);
-        $selectedPeriode = request('periode_id');
+        
+        // Gunakan session periode aktif
+        $selectedPeriode = session('periode_aktif_guru');
 
         $santri = Santri::where('kelas', $kelas)
             ->when($selectedPeriode, fn($q) => $q->where('periode_id', $selectedPeriode))
@@ -97,10 +109,7 @@ class DetailHafalanController extends Controller
         $rawSurah = json_decode(File::get(resource_path('data/surah.json')), true);
         $rawJuz = json_decode(File::get(resource_path('data/juz.json')), true);
 
-        // Ambil transliterasi Surah
         $surahList = collect($rawSurah['data'])->pluck('name.transliteration.id')->toArray();
-
-        // Ambil nomor Juz sebagai string: ["1", "2", ..., "30"]
         $juzList = collect($rawJuz['data'])->pluck('juz')->map(fn($val) => (string) $val)->toArray();
 
         $request->validate([
@@ -108,37 +117,72 @@ class DetailHafalanController extends Controller
             'jadwal_mengajar_id' => 'required|integer|exists:jadwal_mengajar,id',
             'hafalan' => 'required|array',
             'hafalan.*.santri_id' => 'required|exists:santri,id',
-            'hafalan.*.surah' => ['required', 'string', Rule::in($surahList)],
-            'hafalan.*.juz' => ['required', 'string', Rule::in($juzList)],
-            'hafalan.*.ayat_awal' => 'required|string',
-            'hafalan.*.ayat_akhir' => 'required|string',
+            'hafalan.*.surah' => ['nullable', 'string', Rule::in($surahList)],
+            'hafalan.*.juz' => ['nullable', 'string', Rule::in($juzList)],
+            'hafalan.*.ayat_awal' => 'nullable|string',
+            'hafalan.*.ayat_akhir' => 'nullable|string',
         ]);
 
         foreach ($request->hafalan as $data) {
-            DetailHafalan::create([
-                'santri_id' => $data['santri_id'],
-                'jadwal_mengajar_id' => $request->jadwal_mengajar_id,
-                'tanggal' => $request->tanggal,
-                'surah' => $data['surah'],
-                'juz' => $data['juz'],
-                'ayat_awal' => $data['ayat_awal'],
-                'ayat_akhir' => $data['ayat_akhir'],
-            ]);
+            DetailHafalan::updateOrCreate(
+                [
+                    'santri_id' => $data['santri_id'],
+                    'jadwal_mengajar_id' => $request->jadwal_mengajar_id,
+                    'tanggal' => $request->tanggal,
+                ],
+                [
+                    'surah' => $data['surah'],
+                    'juz' => $data['juz'],
+                    'ayat_awal' => $data['ayat_awal'],
+                    'ayat_akhir' => $data['ayat_akhir'],
+                    'is_draft' => false
+                ]
+            );
         }
 
         return redirect()->route('guru.hafalansantri.detail', [
             'kelas' => $request->kelas,
-            'periode_id' => $request->periode_id,
             'tanggal' => $request->tanggal,
-        ])
-            ->with('success', 'Hafalan Santri berhasil disimpan.');
+        ])->with('success', 'Hafalan Santri berhasil disimpan.');
+    }
+
+    public function simpanDraft(Request $request)
+    {
+        foreach ($request->hafalan as $data) {
+            if (!empty($data['surah']) || !empty($data['juz']) || !empty($data['ayat_awal']) || !empty($data['ayat_akhir'])) {
+                DetailHafalan::updateOrCreate(
+                    [
+                        'santri_id' => $data['santri_id'],
+                        'jadwal_mengajar_id' => $request->jadwal_mengajar_id,
+                        'tanggal' => $request->tanggal,
+                    ],
+                    [
+                        'surah' => $data['surah'] ?? null,
+                        'juz' => $data['juz'] ?? null,
+                        'ayat_awal' => $data['ayat_awal'] ?? null,
+                        'ayat_akhir' => $data['ayat_akhir'] ?? null,
+                        'is_draft' => true
+                    ]
+                );
+            }
+        }
+
+        $kelas = $request->kelas;
+        $tanggal = $request->tanggal;
+
+        return redirect()->route('guru.hafalansantri.input', [
+            'kelas' => $kelas,
+            'tanggal' => $tanggal
+        ])->with('success', 'Draft berhasil disimpan.');
     }
 
     public function getHafalanByDate($kelas, $tanggal)
     {
         $user = Auth::user();
         $guru = $user->guru;
-        $periodeId = request('periode_id');
+        
+        // Gunakan session periode aktif
+        $periodeId = session('periode_aktif_guru');
         $page = request('page', 1);
         $perPage = 10;
 

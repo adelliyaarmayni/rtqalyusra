@@ -18,7 +18,9 @@ class KinerjaGuruController extends Controller
     {
         $allPeriode = Periode::all();
         $kategoriPertanyaan = Kategori::all();
-        $selectedPeriode = $request->input('periode_id');
+        
+        // Gunakan session periode aktif
+        $selectedPeriode = session('periode_aktif_guru');
         $availableGuru = collect();
 
         // Ambil guru dari jadwal_mengajar sesuai periode
@@ -43,7 +45,7 @@ class KinerjaGuruController extends Controller
         $guru = null;
         $periode = null;
         $jumlahTelat = 0;
-
+        
         if ($request->filled('nama_guru') && $selectedPeriode) {
             $guru = Guru::where('nama_guru', $request->nama_guru)->first();
             $periode = Periode::find($selectedPeriode);
@@ -64,9 +66,6 @@ class KinerjaGuruController extends Controller
         ]);
     }
 
-
-
-
     public function store(Request $request)
     {
         $rules = [
@@ -83,7 +82,6 @@ class KinerjaGuruController extends Controller
         $request->validate($rules);
 
         DB::beginTransaction();
-
         try {
             $kinerja = KinerjaGuru::create([
                 'nama_guru' => $request->nama_guru,
@@ -100,7 +98,6 @@ class KinerjaGuruController extends Controller
             }
 
             DB::commit();
-
             return redirect()->route('yayasan.dashboard')->with('success', 'Data kinerja guru berhasil disimpan!');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -109,15 +106,13 @@ class KinerjaGuruController extends Controller
                 'request_data' => $request->all(),
                 'user_id' => Auth::id(),
             ]);
-
-            return back()->withInput()->with('error', 'Gagal menyimpan data kinerja guru. Terjadi kesalahan sistem.');
+            return back();
         }
     }
 
     public function getGuruDetail($nama_guru)
     {
         $guru = Guru::where('nama_guru', $nama_guru)->first();
-
         if (!$guru) {
             return response()->json(['error' => 'Guru tidak ditemukan'], 404);
         }

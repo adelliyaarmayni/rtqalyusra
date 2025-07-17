@@ -56,7 +56,7 @@
                 <div class="flex items-center gap-2">
                     <img src="{{ asset('img/image/akun.png') }}" alt="Foto Admin"
                         style="width: 40px; height: 40px; border-radius: 50%;">
-                    <strong>Guru</strong>
+                    <strong>Yayasan</strong>
                 </div>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -89,22 +89,42 @@
 
             <div class="chart-container p-4">
                 <div class="kny-form-group">
-
                     <div class="p-4">
-                        <form method="GET" action="{{ route('yayasan.kategorinilai.index') }}" id="periodeForm"
-                            class="mb-4">
-                            <label for="periode" class="block font-semibold mb-1">Periode</label>
-                            <select id="periode" name="periode_id"
-                                onchange="document.getElementById('periodeForm').submit();"
-                                class="w-full sm:w-60 p-2 border rounded">
-                                <option value="">Pilih Periode</option>
-                                @foreach ($allPeriode as $p)
-                                    <option value="{{ $p->id }}" {{ $selectedPeriode == $p->id ? 'selected' : '' }}>
-                                        {{ $p->tahun_ajaran }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </form>
+                        <!-- Dropdown Periode -->
+                        <div class="mb-4">
+                          <label class="block font-semibold mb-1">Periode</label>
+                          <div class="dropdown relative inline-block">
+                            <button type="button"
+                              class="dropdown-btn bg-[#A4E4B3] text-black border border-gray-300 rounded px-3 py-1.5 flex items-center gap-2 font-semibold text-sm w-60"
+                              onclick="toggleDropdown()">Periode:
+                              <span id="selected-year">{{ $periode?->tahun_ajaran ?? 'Pilih Periode' }}</span>
+                              <span class="menu-arrow ml-auto">
+                                <img src="{{ asset('img/image/arrowdown.png') }}" alt="arrowdown" class="h-3" />
+                              </span>
+                            </button>
+                            <div
+                              class="dropdown-content absolute hidden bg-white mt-1 border border-gray-200 rounded shadow-lg z-10 w-full"
+                              id="dropdown-menu">
+                              @foreach($allPeriode as $p)
+                                <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm {{ $selectedPeriode == $p->id ? 'bg-blue-100' : '' }}"
+                                  onclick="selectYear('{{ $p->id }}', '{{ $p->tahun_ajaran }}')">
+                                  {{ $p->tahun_ajaran }}
+                                  @if($selectedPeriode == $p->id)
+                                    <span class="text-blue-600 font-semibold">(Aktif)</span>
+                                  @endif
+                                </div>
+                              @endforeach
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Loading indicator -->
+                        <div id="loading" class="hidden mb-4">
+                          <div class="flex items-center gap-2">
+                            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                            <span class="text-sm text-gray-600">Memperbarui data...</span>
+                          </div>
+                        </div>
 
                         <form action="{{ route('yayasan.kategorinilai.store') }}" method="POST" class="space-y-6">
                             @csrf
@@ -140,13 +160,11 @@
                                 </div>
                                 <div>
                                     <label class="block font-semibold">Bagian</label>
-                                    <div id="bagian" class="p-2 border rounded bg-gray-50">{{ $guru->bagian ?? '-' }}
-                                    </div>
+                                    <div id="bagian" class="p-2 border rounded bg-gray-50">{{ $guru->bagian ?? '-' }}</div>
                                 </div>
                                 <div>
                                     <label class="block font-semibold">Cabang</label>
-                                    <div id="cabang" class="p-2 border rounded bg-gray-50">{{ $guru->cabang ?? '-' }}
-                                    </div>
+                                    <div id="cabang" class="p-2 border rounded bg-gray-50">{{ $guru->cabang ?? '-' }}</div>
                                 </div>
                                 <div>
                                     <label class="block font-semibold">Jumlah Telat</label>
@@ -178,6 +196,12 @@
                                             </div>
                                         @endforeach
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="kny-button-group">
+                                <button type="submit" class="kny-input-btn">Simpan</button>
+                            </div>
                         </form>
 
                         @if ($selectedPeriode && $availableGuru->isEmpty())
@@ -187,20 +211,8 @@
                             </div>
                         @endif
                     </div>
-
-                    <div class="kny-button-group">
-                        <button type="submit" class="kny-input-btn">Simpan</button>
-                    </div>
                 </div>
             </div>
-            </form>
-
-            {{-- Info Semua Guru Sudah Dinilai --}}
-            @if ($selectedPeriode && $availableGuru->isEmpty())
-                <div class="alert alert-info mt-3">
-                    Semua kinerja guru telah diinput untuk periode <strong>{{ $periode->tahun_ajaran ?? '-' }}</strong>.
-                </div>
-            @endif
         </div>
     </div>
 
@@ -219,23 +231,23 @@
                 toggleBtn.classList.remove('hidden');
             }
         });
+
         document.addEventListener('DOMContentLoaded', function () {
             const guruSelect = document.getElementById('nama-guru');
-            const periodeSelect = document.getElementById('periode');
             const bagianDiv = document.getElementById('bagian');
             const cabangDiv = document.getElementById('cabang');
             const jumlahTelatInput = document.getElementById('jumlahTelat');
             const hiddenJumlahTelatInput = document.getElementById('hidden_jumlah_telat');
-            const namaGuru = guruSelect.options[guruSelect.selectedIndex].text;
 
-            async function fetchGuruInfo(guruId) {
-                if (!guruId) {
+            async function fetchGuruInfo(namaGuru) {
+                if (!namaGuru) {
                     bagianDiv.innerText = '-';
                     cabangDiv.innerText = '-';
                     return;
                 }
+
                 try {
-                    const response = await fetch(`/api/guru/${guruId}`);
+                    const response = await fetch(`/api/guru/${namaGuru}`);
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }
@@ -255,6 +267,7 @@
                     hiddenJumlahTelatInput.value = '0';
                     return;
                 }
+
                 try {
                     const url = `/api/kinerja/calculate-terlambat?nama_guru=${encodeURIComponent(namaGuru)}&periode_id=${periodeId}`;
                     const response = await fetch(url);
@@ -272,32 +285,77 @@
             }
 
             function updateFormDetails() {
-                const guruId = guruSelect.value;
-                const periodeId = periodeSelect.value;
-
-                fetchGuruInfo(guruId);
-                fetchJumlahTerlambat(guruId, periodeId);
+                const namaGuru = guruSelect.value;
+                const periodeId = {{ $selectedPeriode ?? 'null' }};
+                fetchGuruInfo(namaGuru);
+                fetchJumlahTerlambat(namaGuru, periodeId);
             }
 
             guruSelect.addEventListener('change', updateFormDetails);
-            periodeSelect.addEventListener('change', updateFormDetails);
 
-            // --- Initial Load Logic ---
-            const initialGuruId = guruSelect.value;
-            const initialPeriodeId = periodeSelect.value;
+            // Initial load
+            const initialNamaGuru = guruSelect.value;
+            const initialPeriodeId = {{ $selectedPeriode ?? 'null' }};
 
-            // Trigger update jika ada nilai awal dari old input atau data yang di-pass ke view
-            if (initialGuruId || initialPeriodeId) { // Mengubah kondisi agar tetap memuat jika hanya salah satu terisi
+            if (initialNamaGuru || initialPeriodeId) {
                 updateFormDetails();
             } else {
-                // Pastikan nilai default jika tidak ada initial selection
                 bagianDiv.innerText = '-';
                 cabangDiv.innerText = '-';
                 jumlahTelatInput.value = '0';
                 hiddenJumlahTelatInput.value = '0';
             }
         });
+
+        function toggleDropdown() {
+          const menu = document.getElementById('dropdown-menu');
+          menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function selectYear(id, tahun) {
+          // Tampilkan loading
+          document.getElementById('loading').classList.remove('hidden');
+          
+          // Update tampilan dropdown
+          document.getElementById('selected-year').textContent = tahun;
+          document.getElementById('dropdown-menu').style.display = 'none';
+          
+          // Kirim request AJAX untuk update session
+          fetch('{{ route("yayasan.dashboard.update-periode") }}', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+              periode_id: id
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Reload halaman untuk update data
+              window.location.reload();
+            } else {
+              alert('Gagal mengupdate periode: ' + data.message);
+              document.getElementById('loading').classList.add('hidden');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat mengupdate periode');
+            document.getElementById('loading').classList.add('hidden');
+          });
+        }
+
+        // Tutup dropdown saat klik di luar
+        window.addEventListener('click', function (e) {
+          if (!e.target.closest('.dropdown')) {
+            document.getElementById("dropdown-menu").style.display = "none";
+          }
+        });
     </script>
 </body>
+
 
 </html>

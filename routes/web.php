@@ -27,6 +27,15 @@ use App\Http\Controllers\KinerjaGuruAdminController;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/dashboard-guru', [DashboardGuruController::class, 'index'])->name('dashboard-guru');
+    Route::post('/guru/dashboard/update-periode', [DashboardGuruController::class, 'updatePeriode'])->name('guru.dashboard.update-periode');
+
+    Route::get('/dashboard-admin', [DashboardAdminController::class, 'index'])->name('dashboard-admin');
+    Route::post('/admin/dashboard/update-periode', [DashboardAdminController::class, 'updatePeriode'])->name('admin.dashboard.update-periode');
+
+    Route::get('/dashboard-yayasan', [DashboardYayasanController::class, 'index'])->name('dashboard-yayasan');
+    Route::post('/yayasan/dashboard/update-periode', [DashboardYayasanController::class, 'updatePeriode'])->name('yayasan.dashboard.update-periode');
 });
 
 // API - Data Kehadiran
@@ -112,6 +121,7 @@ Route::prefix('guru')->name('guru.')->group(function () {
         Route::get('/input/{kelas}', [DetailHafalanController::class, 'input'])->name('input');
         Route::get('/detail/{kelas}', [DetailHafalanController::class, 'detail'])->name('detail');
         Route::post('/store', [DetailHafalanController::class, 'store'])->name('store');
+        Route::post('/draft', [DetailHafalanController::class, 'simpanDraft'])->name('draft');
 
         // Pindahkan route ini ke dalam group
         Route::get('/detail/{kelas}/{tanggal}', [DetailHafalanController::class, 'getHafalanByDate'])->name('data');
@@ -137,6 +147,7 @@ Route::prefix('yayasan')->name('yayasan.')->group(function () {
     //     return view('yayasan.dashboard.master');
     // })->name('dashboard');
     // Route::get('/', [DashboardYayasanController::class, 'index'])->name('dashboard');
+
 
     Route::prefix('kehadiranY')->name('kehadiranY.')->group(function () {
         // Halaman memilih cabang

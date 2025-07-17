@@ -10,7 +10,7 @@ class DetailHafalan extends Model
 
     protected $fillable = [
         'santri_id', 'jadwal_mengajar_id', 'juz',
-        'surah', 'ayat_awal', 'ayat_akhir', 'tanggal'
+        'surah', 'ayat_awal', 'ayat_akhir', 'tanggal', 'is_draft'
     ];
 
     public function santri()

@@ -15,31 +15,31 @@ class KinerjaGuruAdminController extends Controller
 {
     public function index(Request $request)
     {
-        $periodeFilter = $request->input('periode');
-        $periode = $periodeFilter
-            ? Periode::where('tahun_ajaran', $periodeFilter)->first()
-            : null;
+        // Gunakan session periode aktif
+        $selectedPeriode = session('periode_aktif_guru');
+        $periode = $selectedPeriode ? Periode::find($selectedPeriode) : null;
+        
+        // Ambil semua periode untuk dropdown
+        $periodes = Periode::orderByDesc('tahun_awal')->get();
+        
+        // Dapatkan nama tahun ajaran dari periode terpilih
+        $selectedPeriodeNama = $periode?->tahun_ajaran ?? 'Pilih Periode';
 
         $kategoriList = Kategori::all();
-        $kinerjaList = collect(); // gunakan collection Laravel
+        $kinerjaList = collect();
 
         if ($periode) {
             $kinerjas = KinerjaGuru::where('periode_id', $periode->id)->get();
-
             foreach ($kinerjas as $kinerja) {
                 $penilaian = [];
-
                 foreach ($kategoriList as $kategori) {
                     $jawaban = JawabanKinerja::where('kinerja_id', $kinerja->id)
                         ->where('kategori_id', $kategori->id)
                         ->value('jawaban');
-
                     $penilaian[$kategori->kategori] = $jawaban ?? '-';
                 }
-
                 $guru = \App\Models\Guru::where('nama_guru', $kinerja->nama_guru)->first();
                 $cabang = $guru ? $guru->cabang : '-';
-
                 $kinerjaList->push([
                     'nama_guru' => $kinerja->nama_guru,
                     'cabang' => $cabang,
@@ -60,13 +60,12 @@ class KinerjaGuruAdminController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        $periodes = Periode::orderByDesc('tahun_awal')->get();
-
         return view('admin.kinerjaguru.index', [
             'kinerjaList' => $paginatedKinerjaList,
             'kategoriList' => $kategoriList,
             'periodes' => $periodes,
-            'periodeFilter' => $periodeFilter,
+            'selectedPeriode' => $selectedPeriode,
+            'selectedPeriodeNama' => $selectedPeriodeNama,
         ]);
     }
 }

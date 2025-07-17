@@ -20,15 +20,12 @@ class KehadiranYayasanController extends Controller
     {
         // Ambil semua periode untuk dropdown
         $periodes = Periode::orderByDesc('tahun_awal')->get();
-
-        // Periode yang sedang dipilih dari request
-        $periodeFilter = $request->input('periode');
-        $periode = $periodeFilter
-            ? Periode::where('tahun_ajaran', $periodeFilter)->first()
-            : $periodes->first(); // default ke periode terbaru jika tidak dipilih
+        
+        // Gunakan session periode aktif
+        $selectedPeriode = session('periode_aktif_guru');
+        $periode = $selectedPeriode ? Periode::find($selectedPeriode) : $periodes->first();
 
         $chartData = [];
-
         if ($periode) {
             // Ambil semua jadwal mengajar di periode ini untuk cabang tertentu
             $jadwalIds = JadwalMengajar::where('periode_id', $periode->id)
@@ -47,14 +44,14 @@ class KehadiranYayasanController extends Controller
                         'alfa' => $items->where('status_kehadiran', 'Alfa')->count(),
                     ];
                 })->values();
-
             $chartData = $rawKehadiran;
         }
 
         return view('yayasan.kehadiranY.detail', [
             'cabang' => $cabang,
             'periodes' => $periodes,
-            'periodeFilter' => $periode->tahun_ajaran ?? null,
+            'selectedPeriode' => $selectedPeriode,
+            'selectedPeriodeNama' => $periode?->tahun_ajaran ?? 'Pilih Periode',
             'chartData' => $chartData,
         ]);
     }

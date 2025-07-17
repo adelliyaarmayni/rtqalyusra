@@ -86,38 +86,48 @@
 
       <div class="chart-container p-4">
         <!-- Dropdown Periode -->
-        <form method="GET" id="periodeForm" action="<?php echo e(route('dashboard')); ?>">
-          <div class="dropdown relative inline-block mb-6">
-            <button type="button"
-              class="dropdown-btn bg-[#A4E4B3] text-black border border-gray-300 rounded px-3 py-1.5 flex items-center gap-2 font-semibold text-sm"
-              onclick="toggleDropdown()">Periode:
-              <span id="selected-year"><?php echo e($selectedPeriodeNama ?? 'Pilih Periode'); ?></span>
-              <span class="menu-arrow">
-                <img src="<?php echo e(asset('img/image/arrowdown.png')); ?>" alt="arrowdown" class="h-3" />
-              </span>
-            </button>
+        <div class="dropdown relative inline-block mb-6">
+          <button type="button"
+            class="dropdown-btn bg-[#A4E4B3] text-black border border-gray-300 rounded px-3 py-1.5 flex items-center gap-2 font-semibold text-sm"
+            onclick="toggleDropdown()">Periode:
+            <span id="selected-year"><?php echo e($selectedPeriodeNama ?? 'Pilih Periode'); ?></span>
+            <span class="menu-arrow">
+              <img src="<?php echo e(asset('img/image/arrowdown.png')); ?>" alt="arrowdown" class="h-3" />
+            </span>
+          </button>
+          <div
+            class="dropdown-content absolute hidden bg-white mt-1 border border-gray-200 rounded shadow-lg z-10 w-full"
+            id="dropdown-menu">
+            <?php $__currentLoopData = $periodes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+              <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm <?php echo e($selectedPeriode == $p->id ? 'bg-blue-100' : ''); ?>"
+                onclick="selectYear('<?php echo e($p->id); ?>', '<?php echo e($p->tahun_ajaran); ?>')">
+                <?php echo e($p->tahun_ajaran); ?>
 
-            <div
-              class="dropdown-content absolute hidden bg-white mt-1 border border-gray-200 rounded shadow-lg z-10 w-full"
-              id="dropdown-menu">
-              <?php $__currentLoopData = $periodes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-          <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-          onclick="selectYear('<?php echo e($p->id); ?>', '<?php echo e($p->tahun_ajaran); ?>')"><?php echo e($p->tahun_ajaran); ?></div>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            </div>
+                <?php if($selectedPeriode == $p->id): ?>
+                  <span class="text-blue-600 font-semibold">(Aktif)</span>
+                <?php endif; ?>
+              </div>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
           </div>
-          <input type="hidden" name="periode_id" id="periodeInput" value="<?php echo e($selectedPeriode); ?>">
-        </form>
+        </div>
+
+        <!-- Loading indicator -->
+        <div id="loading" class="hidden mb-4">
+          <div class="flex items-center gap-2">
+            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+            <span class="text-sm text-gray-600">Memperbarui data...</span>
+          </div>
+        </div>
 
         <!-- Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="dashboard-cards">
           <div class="bg-[#A4E4B3] p-6 rounded-xl shadow flex flex-col items-center justify-center text-center">
             <h2 class="text-xl font-bold text-black">Jumlah Kelas Yang Di Ajar</h2>
-            <p class="text-lg mt-2 text-black"><?php echo e($jumlahKelas); ?> Kelas</p>
+            <p class="text-lg mt-2 text-black" id="jumlah-kelas"><?php echo e($jumlahKelas); ?> Kelas</p>
           </div>
           <div class="bg-[#A4E4B3] p-6 rounded-xl shadow flex flex-col items-center justify-center text-center">
             <h2 class="text-xl font-bold text-black">Jumlah Keterlambatan</h2>
-            <p class="text-lg mt-2 text-black"><?php echo e($jumlahTelat); ?> Kegiatan</p>
+            <p class="text-lg mt-2 text-black" id="jumlah-telat"><?php echo e($jumlahTelat); ?> Kegiatan</p>
           </div>
         </div>
       </div>
@@ -131,7 +141,7 @@
 
     toggleBtn.addEventListener('click', () => {
       sidebar.classList.toggle('active');
-      toggleBtn.classList.toggle('hidden'); 
+      toggleBtn.classList.toggle('hidden');
     });
 
     document.addEventListener('click', function (e) {
@@ -147,9 +157,39 @@
     }
 
     function selectYear(id, tahun) {
+      // Tampilkan loading
+      document.getElementById('loading').classList.remove('hidden');
+      
+      // Update tampilan dropdown
       document.getElementById('selected-year').textContent = tahun;
-      document.getElementById('periodeInput').value = id;
-      document.getElementById('periodeForm').submit();
+      document.getElementById('dropdown-menu').style.display = 'none';
+      
+      // Kirim request AJAX untuk update session
+      fetch('<?php echo e(route("guru.dashboard.update-periode")); ?>', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
+        },
+        body: JSON.stringify({
+          periode_id: id
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Reload halaman untuk update data dashboard
+          window.location.reload();
+        } else {
+          alert('Gagal mengupdate periode: ' + data.message);
+          document.getElementById('loading').classList.add('hidden');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat mengupdate periode');
+        document.getElementById('loading').classList.add('hidden');
+      });
     }
 
     window.onclick = function (e) {
